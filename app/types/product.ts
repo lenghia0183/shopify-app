@@ -35,6 +35,10 @@ export interface ProductListResponse {
 }
 
 export type ProductTag = string;
+export interface ProductTagOption {
+  value: ProductTag;
+  label: ProductTag;
+}
 
 export interface ProductTagListResponse {
   productTags: {

@@ -161,7 +161,11 @@ export default function FormikAutocomplete<T, O extends Option = Option>({
         onSelect={(newSelected) => {
           helpers.setValue(newSelected);
         }}
-        loading={isLoading || fetcher?.state === "submitting"}
+        loading={
+          isLoading ||
+          fetcher?.state === "submitting" ||
+          fetcher?.state === "loading"
+        }
         onLoadMoreResults={handleLoadMoreResults}
         willLoadMoreResults={willLoadMoreResults}
         emptyState={emptyState}

@@ -3,8 +3,6 @@ import {
   Page,
   LegacyCard,
   FormLayout,
-  Tag,
-  LegacyStack,
   Thumbnail,
   InlineStack,
   Box,
@@ -21,17 +19,24 @@ import FormikSelect from "app/components/FormikSelect";
 import FormikChoiceList from "app/components/FormikChoiceList";
 import ProductSelectModal from "./ProductSelectModal";
 
-import CollectionSelectModal from "./CollectionSelectModal";
 import TagAutocomplete from "app/components/AutoComplete";
 import { useFetcher } from "@remix-run/react";
-import { CollectionListResponse } from "app/types/collection";
+import {
+  type CollectionListResponse,
+  type CollectionOptions,
+} from "app/types/collection";
 import toTitleCase from "app/utils/toTitleCase";
+import {
+  type ProductTagListResponse,
+  type ProductTagOption,
+} from "app/types/product";
 
 export default function PricingRulePage() {
   const [productModalOpen, setProductModalOpen] = useState(false);
-  const [collectionModalOpen, setCollectionModalOpen] = useState(false);
 
-  const fetcher = useFetcher({ key: "getProductTagList" });
+  const fetcher = useFetcher<ProductTagListResponse>({
+    key: "getProductTagList",
+  });
   const collectionFetcher = useFetcher<CollectionListResponse>({
     key: "getCollectionList",
   });
@@ -112,13 +117,14 @@ export default function PricingRulePage() {
     if (values.applyTo.includes("productTags")) {
       return (
         <TagAutocomplete
-          // selectedTagPosition="top"
           options={[]}
           name="productTags"
           asyncRequest={() => {
             fetcher.load("/api/productTag");
           }}
-          asyncRequestHelper={(data: any) => {
+          asyncRequestHelper={(
+            data: ProductTagListResponse,
+          ): ProductTagOption[] => {
             return (
               data?.productTags?.edges?.map((tag: any) => ({
                 value: tag.node,
@@ -151,10 +157,9 @@ export default function PricingRulePage() {
           asyncRequest={() => {
             collectionFetcher.load("/api/collection");
           }}
-          asyncRequestHelper={(data: any) => {
+          asyncRequestHelper={(data): CollectionOptions[] => {
             return (
-              data?.collections?.edges?.map((collection: any) => {
-                // console.log("collection", collection.node);
+              data?.collections?.edges?.map((collection) => {
                 return {
                   value: collection.node.id,
                   label: collection.node.title,
@@ -166,13 +171,14 @@ export default function PricingRulePage() {
           fetcher={collectionFetcher}
           renderSelectedTags={(selectedOptions, options, removeTag) => {
             console.log("removeTag", removeTag);
+
             return (
               <BlockStack gap="200">
                 {selectedOptions.map((option: string) => {
                   const selectedOption = options.find(
                     (opt) => opt.value === option,
                   );
-                  // console.log("selectedOption", selectedOption);
+
                   return (
                     <Box
                       key={option}
@@ -183,14 +189,15 @@ export default function PricingRulePage() {
                       <InlineStack align="space-between" blockAlign="center">
                         <InlineStack gap="400" blockAlign="center">
                           <Thumbnail
-                            source={selectedOption?.url}
-                            alt={selectedOption?.label}
+                            source={selectedOption?.url || ""}
+                            alt={selectedOption?.label || ""}
                             size="large"
                           />
                           <Text variant="bodyMd" fontWeight="regular" as="p">
-                            {toTitleCase(selectedOption?.label)}
+                            {toTitleCase(selectedOption?.label || "")}
                           </Text>
                         </InlineStack>
+                        {/* @ts-expect-error: onClick expects () => unknown, but we return void */}
                         <Button icon={XIcon} onClick={removeTag(option)} />
                       </InlineStack>
                     </Box>
@@ -291,13 +298,6 @@ export default function PricingRulePage() {
       <ProductSelectModal
         productModalOpen={productModalOpen}
         setProductModalOpen={setProductModalOpen}
-        handleProductSelect={handleProductSelect}
-      />
-
-      {/* COLLECTION SELECT MODAL */}
-      <CollectionSelectModal
-        collectionModalOpen={collectionModalOpen}
-        setCollectionModalOpen={setCollectionModalOpen}
         handleProductSelect={handleProductSelect}
       />
     </Page>

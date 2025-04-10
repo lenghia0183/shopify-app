@@ -8,7 +8,11 @@ export interface Collection {
   };
   title: string;
 }
-
+export interface CollectionOptions {
+  value: string;
+  label: string;
+  url?: string;
+}
 export interface CollectionListResponse {
   collections: {
     edges: {
