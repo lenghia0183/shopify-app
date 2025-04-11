@@ -1,14 +1,26 @@
-// routes/api/search-products.tsx
-
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs } from "@remix-run/node";
 import { authenticate } from "app/shopify.server";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
+  const formData = await request.formData();
+  const search = formData.get("search")?.toString() || "";
+  const cursor = formData.get("cursor")?.toString();
+  const direction = formData.get("direction")?.toString();
+
   const { admin } = await authenticate.admin(request);
+
+  const paginationArg =
+    direction === "prev"
+      ? `last: 5, before: "${cursor}"`
+      : cursor
+        ? `first: 5, after: "${cursor}"`
+        : `first: 5`;
+
   const response = await admin.graphql(
-    `query productList {
-      products(first: 10) {
+    `query productList($query: String) {
+      products(${paginationArg}, query: $query) {
         edges {
+          cursor
           node {
             id
             title
@@ -34,15 +46,19 @@ export async function loader({ request }: LoaderFunctionArgs) {
             }
           }
         }
+        pageInfo {
+          hasNextPage
+          hasPreviousPage
+        }
       }
     }`,
+    {
+      variables: {
+        query: search,
+      },
+    },
   );
-  const data = await response.json();
 
+  const data = await response.json();
   return data.data;
 }
-// const Test = () => {
-//   return <div>Test</div>;
-// };
-
-// export default Test;

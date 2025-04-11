@@ -9,7 +9,7 @@ import {
 } from "@shopify/polaris";
 import { SearchIcon } from "@shopify/polaris-icons";
 import toTitleCase from "app/utils/toTitleCase";
-import { useField } from "formik";
+import { useField, useFormikContext } from "formik";
 import { useEffect, useMemo, useState, useCallback } from "react";
 
 type Option = { value: string; label: string };
@@ -49,6 +49,8 @@ export default function FormikAutocomplete<T, O extends Option = Option>({
   ...rest
 }: FormikAutocompleteProps<T, O>) {
   const [field, meta, helpers] = useField(name);
+  const { setFieldValue } = useFormikContext<any>();
+
   const selectedOptions = useMemo(() => field.value || [], [field.value]);
 
   const [finalOptions, setFinalOptions] = useState<O[]>(deselectedOptions);
@@ -149,6 +151,17 @@ export default function FormikAutocomplete<T, O extends Option = Option>({
       </div>
     </>
   );
+
+  useEffect(() => {
+    setFieldValue(`${name}State`, {
+      inputValue,
+      displayedOptions: displayedOptions,
+      visibleIndex: visibleOptionIndex,
+      willLoadMore: willLoadMoreResults,
+      filteredOptions: filteredOptions,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inputValue, visibleOptionIndex, willLoadMoreResults, name]);
 
   return (
     <LegacyStack vertical>

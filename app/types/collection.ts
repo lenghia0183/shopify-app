@@ -1,6 +1,6 @@
-import { type PageInfo } from "./common";
+import { type IPageInfo } from "./common";
 
-export interface Collection {
+export interface ICollection {
   id: string;
   image: {
     url: string;
@@ -8,16 +8,16 @@ export interface Collection {
   };
   title: string;
 }
-export interface CollectionOptions {
+export interface ICollectionOptions {
   value: string;
   label: string;
   url?: string;
 }
-export interface CollectionListResponse {
+export interface ICollectionListResponse {
   collections: {
     edges: {
-      node: Collection;
+      node: ICollection;
     }[];
-    pageInfo: PageInfo;
+    pageInfo: IPageInfo;
   };
 }

@@ -1,6 +1,6 @@
-import { type PageInfo } from "./common";
+import { type IPageInfo } from "./common";
 
-export interface Product {
+export interface IProduct {
   id: string;
   title: string;
   handle?: string;
@@ -25,26 +25,27 @@ export interface Product {
   };
 }
 
-export interface ProductListResponse {
+export interface IProductListResponse {
   products: {
     edges: {
-      node: Product;
+      node: IProduct;
+      cursor: string;
     }[];
-    pageInfo: PageInfo;
+    pageInfo: IPageInfo;
   };
 }
 
 export type ProductTag = string;
-export interface ProductTagOption {
+export interface IProductTagOption {
   value: ProductTag;
   label: ProductTag;
 }
 
-export interface ProductTagListResponse {
+export interface IProductTagListResponse {
   productTags: {
     edges: {
       node: ProductTag;
     }[];
-    pageInfo: PageInfo;
+    pageInfo: IPageInfo;
   };
 }

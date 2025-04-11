@@ -3,7 +3,7 @@
 client_id = "4d6ad0043815feef1c54c905fb177c3e"
 name = "MyApp1"
 handle = "myapp1-58"
-application_url = "https://sword-algorithm-labeled-approved.trycloudflare.com"
+application_url = "https://returns-icon-kind-hitting.trycloudflare.com"
 embedded = true
 
 [build]
@@ -27,9 +27,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://sword-algorithm-labeled-approved.trycloudflare.com/auth/callback",
-  "https://sword-algorithm-labeled-approved.trycloudflare.com/auth/shopify/callback",
-  "https://sword-algorithm-labeled-approved.trycloudflare.com/api/auth/callback"
+  "https://returns-icon-kind-hitting.trycloudflare.com/auth/callback",
+  "https://returns-icon-kind-hitting.trycloudflare.com/auth/shopify/callback",
+  "https://returns-icon-kind-hitting.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]

@@ -26,7 +26,6 @@ export default function App() {
         </Link>
         <Link to="/app/additional">Additional page</Link>
         <Link to="/app/pricing_rule">Pricing Rule</Link>
-        <Link to="/api/product">Pricing Rule</Link>
       </NavMenu>
       <Outlet />
     </AppProvider>

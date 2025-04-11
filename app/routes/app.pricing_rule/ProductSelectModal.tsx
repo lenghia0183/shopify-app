@@ -3,85 +3,166 @@ import { Modal, TitleBar } from "@shopify/app-bridge-react";
 import {
   BlockStack,
   Card,
-  Checkbox,
+  Icon,
   ResourceItem,
   ResourceList,
   Spinner,
   Thumbnail,
 } from "@shopify/polaris";
-import { type ProductListResponse } from "app/types/product";
+import { SearchIcon } from "@shopify/polaris-icons";
+import FormikTextField from "app/components/FormikTextField";
+import { useDebounce } from "app/hooks/useDebounce";
+import { type IPricingRuleFormValues } from "app/types/pricingRule";
+import { type IProductListResponse } from "app/types/product";
+import { useFormikContext } from "formik";
 import { useEffect, useState } from "react";
 
 export interface ProductSelectModalProps {
   productModalOpen: boolean;
-  setProductModalOpen: any;
-  handleProductSelect: any;
+  setProductModalOpen: (open: boolean) => void;
 }
 
 const ProductSelectModal = ({
   productModalOpen,
   setProductModalOpen,
-  handleProductSelect,
 }: ProductSelectModalProps) => {
-  const fetcher = useFetcher<ProductListResponse>();
+  const fetcher = useFetcher<IProductListResponse>();
   const [products, setProducts] = useState<any[]>([]);
+  const [cursors, setCursors] = useState<{
+    startCursor: string | null;
+    endCursor: string | null;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  }>({
+    startCursor: null,
+    endCursor: null,
+    hasNextPage: false,
+    hasPreviousPage: false,
+  });
 
+  const { setFieldValue, values } = useFormikContext<IPricingRuleFormValues>();
+  const debouncedSearchProduct = useDebounce(
+    values.searchSpecificProducts || "",
+  );
+
+  // Fetch data lần đầu
   useEffect(() => {
-    if (productModalOpen && fetcher.state === "idle" && !fetcher.data) {
-      fetcher.load("/api/product");
-    }
-
-    if (fetcher?.data?.products?.edges?.length) {
-      const fetchedProducts = fetcher.data.products.edges.map((edge: any) => {
-        return edge.node;
+    if (productModalOpen && fetcher.state === "idle") {
+      const formData = new FormData();
+      formData.append("search", debouncedSearchProduct);
+      fetcher.submit(formData, {
+        method: "post",
+        action: "/api/product",
       });
-      setProducts(fetchedProducts);
     }
-  }, [fetcher, productModalOpen]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [productModalOpen, debouncedSearchProduct]);
+
+  // Cập nhật danh sách sản phẩm và cursor
+  useEffect(() => {
+    if (fetcher?.data?.products?.edges?.length) {
+      const edges = fetcher.data.products.edges;
+      const fetchedProducts = edges.map((edge) => edge.node);
+
+      setProducts(fetchedProducts);
+      setCursors({
+        startCursor: edges[0]?.cursor ?? null,
+        endCursor: edges[edges.length - 1]?.cursor ?? null,
+        hasNextPage: fetcher.data.products.pageInfo.hasNextPage,
+        hasPreviousPage: fetcher.data.products.pageInfo.hasPreviousPage,
+      });
+    }
+  }, [fetcher.data]);
+
+  const handleConfirm = () => {
+    setProductModalOpen(false);
+  };
+
+  const promotedBulkActions = [
+    {
+      content: "Edit customers",
+      onAction: () => console.log("Todo: implement bulk edit"),
+    },
+  ];
+
+  const handlePagination = (direction: "next" | "prev") => {
+    const formData = new FormData();
+    formData.append("search", `title:*${debouncedSearchProduct}*`);
+    formData.append(
+      "cursor",
+      direction === "next"
+        ? (cursors.endCursor ?? "")
+        : (cursors.startCursor ?? ""),
+    );
+    formData.append("direction", direction);
+
+    fetcher.submit(formData, {
+      method: "post",
+      action: "/api/product",
+    });
+  };
 
   return (
-    <Modal
-      open={productModalOpen}
-      id="my-modal"
-      onHide={() => {
-        setProductModalOpen(false);
-      }}
-    >
+    <Modal open={productModalOpen} onHide={() => setProductModalOpen(false)}>
       <TitleBar title="Select Products">
         <button onClick={() => setProductModalOpen(false)}>Đóng</button>
-        <button variant="primary">Ok</button>
+        <button onClick={handleConfirm}>Ok</button>
       </TitleBar>
+
       <Card>
-        {fetcher.state === "loading" || fetcher.state === "submitting" ? (
-          <BlockStack align="center" inlineAlign="center">
-            <Spinner />
-          </BlockStack>
-        ) : (
-          <ResourceList
-            resourceName={{ singular: "product", plural: "products" }}
-            items={products}
-            renderItem={(item) => {
-              const { id, title, images } = item;
-              const media = (
-                <Thumbnail
-                  source={images?.edges[0]?.node?.originalSrc || ""}
-                  alt={title}
-                />
-              );
-              return (
-                <ResourceItem onClick={() => {}} id={id} media={media}>
-                  <Checkbox
-                    label={title}
-                    onChange={() => handleProductSelect(id)}
-                  />
-                </ResourceItem>
-              );
-            }}
+        <BlockStack gap="300">
+          <FormikTextField
+            name="searchSpecificProducts"
+            label="Search and select products"
+            labelHidden
+            placeholder="Click to select products"
+            autoComplete="off"
+            autoFocus
+            prefix={<Icon source={SearchIcon} tone="base" />}
           />
-        )}
+
+          {fetcher.state === "loading" || fetcher.state === "submitting" ? (
+            <BlockStack align="center" inlineAlign="center">
+              <Spinner />
+            </BlockStack>
+          ) : (
+            <ResourceList
+              items={products}
+              selectedItems={values.selectedProducts}
+              onSelectionChange={(values) => {
+                return setFieldValue("selectedProducts", values);
+              }}
+              promotedBulkActions={promotedBulkActions}
+              resolveItemId={({ id }) => id}
+              renderItem={renderProductItem}
+              pagination={{
+                hasNext: cursors.hasNextPage,
+                hasPrevious: cursors.hasPreviousPage,
+                onNext: () => handlePagination("next"),
+                onPrevious: () => handlePagination("prev"),
+              }}
+            />
+          )}
+        </BlockStack>
       </Card>
     </Modal>
   );
 };
+
+function renderProductItem(item: any) {
+  const { id, title, images } = item;
+  const media = (
+    <Thumbnail
+      source={images?.edges?.[0]?.node?.originalSrc || ""}
+      alt={title}
+    />
+  );
+
+  return (
+    <ResourceItem onClick={() => {}} id={id} media={media}>
+      {title}
+    </ResourceItem>
+  );
+}
 
 export default ProductSelectModal;

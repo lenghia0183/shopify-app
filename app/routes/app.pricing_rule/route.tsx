@@ -9,8 +9,9 @@ import {
   BlockStack,
   Button,
   Text,
+  Icon,
 } from "@shopify/polaris";
-import { PlusCircleIcon, XIcon } from "@shopify/polaris-icons";
+import { PlusCircleIcon, SearchIcon, XIcon } from "@shopify/polaris-icons";
 import { TitleBar } from "@shopify/app-bridge-react";
 import { useState } from "react";
 import { Form, Formik } from "formik";
@@ -19,51 +20,59 @@ import FormikSelect from "app/components/FormikSelect";
 import FormikChoiceList from "app/components/FormikChoiceList";
 import ProductSelectModal from "./ProductSelectModal";
 
-import TagAutocomplete from "app/components/AutoComplete";
+import FormikAutocomplete from "app/components/AutoComplete";
 import { useFetcher } from "@remix-run/react";
 import {
-  type CollectionListResponse,
-  type CollectionOptions,
+  type ICollectionListResponse,
+  type ICollectionOptions,
 } from "app/types/collection";
 import toTitleCase from "app/utils/toTitleCase";
 import {
-  type ProductTagListResponse,
-  type ProductTagOption,
+  type IProductTagListResponse,
+  type IProductTagOption,
 } from "app/types/product";
+import { type IPricingRuleFormValues } from "app/types/pricingRule";
+import {
+  APPLY_TO_OPTIONS,
+  PRICE_DISCOUNT_TYPE,
+  PRICING_RULE_STATUS,
+} from "app/constants/pricingRule";
 
 export default function PricingRulePage() {
   const [productModalOpen, setProductModalOpen] = useState(false);
 
-  const fetcher = useFetcher<ProductTagListResponse>({
+  const fetcher = useFetcher<IProductTagListResponse>({
     key: "getProductTagList",
   });
-  const collectionFetcher = useFetcher<CollectionListResponse>({
+  const collectionFetcher = useFetcher<ICollectionListResponse>({
     key: "getCollectionList",
   });
 
-  const [, setSelectedProducts] = useState<string[]>([]);
+  const fetcherAddProductTag = useFetcher({
+    key: "addProductTag",
+  });
 
   const statusOptions = [
-    { label: "Enable", value: "enable" },
-    { label: "Disable", value: "disable" },
+    { label: "Enable", value: PRICING_RULE_STATUS.ENABLE },
+    { label: "Disable", value: PRICING_RULE_STATUS.DISABLE },
   ];
 
   const applyToOptions = (values: any) => {
     return [
-      { label: "All products", value: "all" },
+      { label: "All products", value: APPLY_TO_OPTIONS.ALL },
       {
         label: "Specific products",
-        value: "specificProducts",
+        value: APPLY_TO_OPTIONS.SPECIFIC_PRODUCTS,
         renderChildren: () => renderSpecificChildren(values),
       },
       {
         label: "Product collection",
-        value: "productCollections",
+        value: APPLY_TO_OPTIONS.PRODUCT_COLLECTIONS,
         renderChildren: () => renderCollectionChildren(values),
       },
       {
         label: "Product Tags",
-        value: "productTags",
+        value: APPLY_TO_OPTIONS.PRODUCT_TAGS,
         renderChildren: () => renderTagChildren(values),
       },
     ];
@@ -72,17 +81,17 @@ export default function PricingRulePage() {
   const customPricesOptions = [
     {
       label: "Apply a price to selected products",
-      value: "apply",
+      value: PRICE_DISCOUNT_TYPE.SET_NEW_PRICE,
     },
     {
       label:
         "Decrease a fixed amount of the original prices of selected products",
-      value: "decreaseFixed",
+      value: PRICE_DISCOUNT_TYPE.DISCOUNT_FIXED_AMOUNT,
     },
     {
       label:
         "Decrease the original prices of selected products by a percentage (%)",
-      value: "decreasePercent",
+      value: PRICE_DISCOUNT_TYPE.DISCOUNT_PERCENTAGE,
     },
   ];
 
@@ -92,143 +101,176 @@ export default function PricingRulePage() {
     });
   };
 
-  const handleProductSelect = (id: string) => {
-    setSelectedProducts((prev) =>
-      prev.includes(id) ? prev.filter((pid) => pid !== id) : [...prev, id],
-    );
-  };
-
-  const renderSpecificChildren = (values: any) => {
-    if (values.applyTo.includes("specificProducts")) {
+  const renderSpecificChildren = (values: IPricingRuleFormValues) => {
+    if (values.applyTo.includes(APPLY_TO_OPTIONS.SPECIFIC_PRODUCTS)) {
       return (
-        <FormikTextField
-          name="searchSpecificProducts"
-          label="Search and select products"
-          labelHidden
-          onFocus={toggleProductModal}
-          placeholder="Click to select products"
-          autoComplete="off"
-        />
+        <Box paddingBlockEnd="200">
+          <InlineStack
+            gap="200"
+            blockAlign="center"
+            align="space-between"
+            wrap={false}
+          >
+            <Box width="100%">
+              <FormikTextField
+                name="searchSpecificProducts"
+                label="Search and select products"
+                labelHidden
+                onChange={() => {
+                  setProductModalOpen(true);
+                }}
+                prefix={<Icon source={SearchIcon} tone="base" />}
+                placeholder="Click to select products"
+                autoComplete="off"
+              />
+            </Box>
+            <Button
+              onClick={toggleProductModal}
+              // icon={PlusCircleIcon}
+              accessibilityLabel="Browse"
+            >
+              Browse
+            </Button>
+          </InlineStack>
+        </Box>
       );
     }
   };
 
-  const renderTagChildren = (values: any) => {
-    if (values.applyTo.includes("productTags")) {
+  const renderTagChildren = (values: IPricingRuleFormValues) => {
+    if (values.applyTo.includes(APPLY_TO_OPTIONS.PRODUCT_TAGS)) {
       return (
-        <TagAutocomplete
-          options={[]}
-          name="productTags"
-          asyncRequest={() => {
-            fetcher.load("/api/productTag");
-          }}
-          asyncRequestHelper={(
-            data: ProductTagListResponse,
-          ): ProductTagOption[] => {
-            return (
-              data?.productTags?.edges?.map((tag: any) => ({
-                value: tag.node,
-                label: tag.node,
-              })) ?? []
-            );
-          }}
-          fetcher={fetcher}
-          actionBefore={{
-            accessibilityLabel: "Action label",
-            content: "Add",
-            helpText: "Add new tag",
-            icon: PlusCircleIcon,
-            wrapOverflow: true,
-            onAction: () => {
-              console.log("actionBefore clicked!");
-            },
-          }}
-        />
+        <Box paddingBlockEnd="200">
+          <FormikAutocomplete
+            options={[]}
+            name="productTags"
+            asyncRequest={() => {
+              fetcher.load("/api/productTag");
+            }}
+            asyncRequestHelper={(
+              data: IProductTagListResponse,
+            ): IProductTagOption[] => {
+              return (
+                data?.productTags?.edges?.map((tag: any) => ({
+                  value: tag.node,
+                  label: tag.node,
+                })) ?? []
+              );
+            }}
+            fetcher={fetcher}
+            {...(values?.productTagsState?.filteredOptions?.length === 0 && {
+              actionBefore: {
+                accessibilityLabel: "Action label",
+                content: "Add",
+                helpText: `Add ${values.productTagsState.inputValue}`,
+                icon: PlusCircleIcon,
+                wrapOverflow: true,
+                onAction: () => {
+                  const newTag = values.productTagsState.inputValue;
+
+                  const addTagFormData = new FormData();
+                  addTagFormData.append("tags", newTag || "");
+
+                  fetcherAddProductTag.submit(addTagFormData, {
+                    method: "post",
+                    action: "/api/productTag",
+                  });
+                },
+              },
+            })}
+          />
+        </Box>
       );
     }
   };
 
-  const renderCollectionChildren = (values: any) => {
-    if (values.applyTo.includes("productCollections")) {
+  const renderCollectionChildren = (values: IPricingRuleFormValues) => {
+    if (values.applyTo.includes(APPLY_TO_OPTIONS.PRODUCT_COLLECTIONS)) {
       return (
-        <TagAutocomplete
-          options={[]}
-          name="collections"
-          asyncRequest={() => {
-            collectionFetcher.load("/api/collection");
-          }}
-          asyncRequestHelper={(data): CollectionOptions[] => {
-            return (
-              data?.collections?.edges?.map((collection) => {
-                return {
-                  value: collection.node.id,
-                  label: collection.node.title,
-                  url: collection.node.image?.url,
-                };
-              }) ?? []
-            );
-          }}
-          fetcher={collectionFetcher}
-          renderSelectedTags={(selectedOptions, options, removeTag) => {
-            console.log("removeTag", removeTag);
+        <Box paddingBlockEnd="200">
+          <FormikAutocomplete
+            options={[]}
+            name="collections"
+            asyncRequest={() => {
+              collectionFetcher.load("/api/collection");
+            }}
+            asyncRequestHelper={(data): ICollectionOptions[] => {
+              return (
+                data?.collections?.edges?.map((collection) => {
+                  return {
+                    value: collection.node.id,
+                    label: collection.node.title,
+                    url: collection.node.image?.url,
+                  };
+                }) ?? []
+              );
+            }}
+            fetcher={collectionFetcher}
+            renderSelectedTags={(selectedOptions, options, removeTag) => {
+              return (
+                <BlockStack gap="200">
+                  {selectedOptions.map((option: string) => {
+                    const selectedOption = options.find(
+                      (opt) => opt.value === option,
+                    );
 
-            return (
-              <BlockStack gap="200">
-                {selectedOptions.map((option: string) => {
-                  const selectedOption = options.find(
-                    (opt) => opt.value === option,
-                  );
-
-                  return (
-                    <Box
-                      key={option}
-                      padding="300"
-                      background="bg-fill-brand-disabled"
-                      borderRadius="100"
-                    >
-                      <InlineStack align="space-between" blockAlign="center">
-                        <InlineStack gap="400" blockAlign="center">
-                          <Thumbnail
-                            source={selectedOption?.url || ""}
-                            alt={selectedOption?.label || ""}
-                            size="large"
-                          />
-                          <Text variant="bodyMd" fontWeight="regular" as="p">
-                            {toTitleCase(selectedOption?.label || "")}
-                          </Text>
+                    return (
+                      <Box
+                        key={option}
+                        padding="300"
+                        background="bg-fill-brand-disabled"
+                        borderRadius="100"
+                      >
+                        <InlineStack align="space-between" blockAlign="center">
+                          <InlineStack gap="400" blockAlign="center">
+                            <Thumbnail
+                              source={selectedOption?.url || ""}
+                              alt={selectedOption?.label || ""}
+                              size="large"
+                            />
+                            <Text variant="bodyMd" fontWeight="regular" as="p">
+                              {toTitleCase(selectedOption?.label || "")}
+                            </Text>
+                          </InlineStack>
+                          {/* @ts-expect-error: onClick expects () => unknown, but we return void */}
+                          <Button icon={XIcon} onClick={removeTag(option)} />
                         </InlineStack>
-                        {/* @ts-expect-error: onClick expects () => unknown, but we return void */}
-                        <Button icon={XIcon} onClick={removeTag(option)} />
-                      </InlineStack>
-                    </Box>
-                  );
-                })}
-              </BlockStack>
-            );
-          }}
-        />
+                      </Box>
+                    );
+                  })}
+                </BlockStack>
+              );
+            }}
+          />
+        </Box>
       );
     }
+  };
+
+  console.log("fetcher", fetcherAddProductTag.data);
+
+  const initialValues: IPricingRuleFormValues = {
+    name: "",
+    priority: "",
+    status: PRICING_RULE_STATUS.ENABLE,
+    applyTo: [],
+    priceType: "",
+    priceValue: "",
+    productTags: [],
+    productTagsState: {},
+    selectedProducts: [],
+    collections: [],
   };
 
   return (
     <Page>
       <TitleBar title="New Pricing Rule" />
       <Formik
-        initialValues={{
-          name: "",
-          priority: "",
-          status: "disable",
-          applyTo: ["none"],
-          priceType: "",
-          priceValue: "",
-          productTags: [],
-        }}
+        initialValues={initialValues}
         onSubmit={(values) => {}}
         enableReinitialize
       >
         {({ values }) => {
-          // console.log("values", values);
           return (
             <Form>
               <Layout>
@@ -286,6 +328,12 @@ export default function PricingRulePage() {
                         autoComplete=""
                       />
                     </FormLayout>
+
+                    {/* PRODUCT SELECT MODAL */}
+                    <ProductSelectModal
+                      productModalOpen={productModalOpen}
+                      setProductModalOpen={setProductModalOpen}
+                    />
                   </LegacyCard>
                 </Layout.Section>
               </Layout>
@@ -293,13 +341,6 @@ export default function PricingRulePage() {
           );
         }}
       </Formik>
-
-      {/* PRODUCT SELECT MODAL */}
-      <ProductSelectModal
-        productModalOpen={productModalOpen}
-        setProductModalOpen={setProductModalOpen}
-        handleProductSelect={handleProductSelect}
-      />
     </Page>
   );
 }
