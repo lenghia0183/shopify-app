@@ -1,8 +1,8 @@
 export interface IPageInfo {
   hasNextPage: boolean;
   hasPreviousPage: boolean;
-  startCursor: string;
-  endCursor: string;
+  startCursor: string | null;
+  endCursor: string | null;
 }
 
 export interface IAutoCompleteState {

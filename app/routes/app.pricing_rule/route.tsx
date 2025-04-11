@@ -144,6 +144,7 @@ export default function PricingRulePage() {
           <FormikAutocomplete
             options={[]}
             name="productTags"
+            searchAsync={false}
             asyncRequest={() => {
               fetcher.load("/api/productTag");
             }}
@@ -191,8 +192,13 @@ export default function PricingRulePage() {
           <FormikAutocomplete
             options={[]}
             name="collections"
-            asyncRequest={() => {
-              collectionFetcher.load("/api/collection");
+            asyncRequest={(value) => {
+              const formData = new FormData();
+              formData.append("query", value ? `title:*${value}*` : "");
+              collectionFetcher.submit(formData, {
+                method: "post",
+                action: "/api/collection",
+              });
             }}
             asyncRequestHelper={(data): ICollectionOptions[] => {
               return (
@@ -201,22 +207,20 @@ export default function PricingRulePage() {
                     value: collection.node.id,
                     label: collection.node.title,
                     url: collection.node.image?.url,
+                    altText: collection.node.image?.altText,
                   };
                 }) ?? []
               );
             }}
             fetcher={collectionFetcher}
-            renderSelectedTags={(selectedOptions, options, removeTag) => {
+            renderSelectedTags={(removeTag) => {
+              const collectionSelectedList = values.collections;
               return (
                 <BlockStack gap="200">
-                  {selectedOptions.map((option: string) => {
-                    const selectedOption = options.find(
-                      (opt) => opt.value === option,
-                    );
-
+                  {collectionSelectedList?.map((option: ICollectionOptions) => {
                     return (
                       <Box
-                        key={option}
+                        key={option.value}
                         padding="300"
                         background="bg-fill-brand-disabled"
                         borderRadius="100"
@@ -224,12 +228,12 @@ export default function PricingRulePage() {
                         <InlineStack align="space-between" blockAlign="center">
                           <InlineStack gap="400" blockAlign="center">
                             <Thumbnail
-                              source={selectedOption?.url || ""}
-                              alt={selectedOption?.label || ""}
+                              source={option?.url || ""}
+                              alt={option?.altText || ""}
                               size="large"
                             />
                             <Text variant="bodyMd" fontWeight="regular" as="p">
-                              {toTitleCase(selectedOption?.label || "")}
+                              {toTitleCase(option?.label || "")}
                             </Text>
                           </InlineStack>
                           {/* @ts-expect-error: onClick expects () => unknown, but we return void */}
@@ -246,8 +250,6 @@ export default function PricingRulePage() {
       );
     }
   };
-
-  console.log("fetcher", fetcherAddProductTag.data);
 
   const initialValues: IPricingRuleFormValues = {
     name: "",

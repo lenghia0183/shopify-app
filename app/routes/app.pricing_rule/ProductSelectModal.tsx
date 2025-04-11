@@ -12,6 +12,7 @@ import {
 import { SearchIcon } from "@shopify/polaris-icons";
 import FormikTextField from "app/components/FormikTextField";
 import { useDebounce } from "app/hooks/useDebounce";
+import { type IPageInfo } from "app/types/common";
 import { type IPricingRuleFormValues } from "app/types/pricingRule";
 import { type IProductListResponse } from "app/types/product";
 import { useFormikContext } from "formik";
@@ -28,12 +29,7 @@ const ProductSelectModal = ({
 }: ProductSelectModalProps) => {
   const fetcher = useFetcher<IProductListResponse>();
   const [products, setProducts] = useState<any[]>([]);
-  const [cursors, setCursors] = useState<{
-    startCursor: string | null;
-    endCursor: string | null;
-    hasNextPage: boolean;
-    hasPreviousPage: boolean;
-  }>({
+  const [cursors, setCursors] = useState<IPageInfo>({
     startCursor: null,
     endCursor: null,
     hasNextPage: false,
@@ -45,7 +41,6 @@ const ProductSelectModal = ({
     values.searchSpecificProducts || "",
   );
 
-  // Fetch data lần đầu
   useEffect(() => {
     if (productModalOpen && fetcher.state === "idle") {
       const formData = new FormData();
@@ -58,18 +53,26 @@ const ProductSelectModal = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productModalOpen, debouncedSearchProduct]);
 
-  // Cập nhật danh sách sản phẩm và cursor
   useEffect(() => {
-    if (fetcher?.data?.products?.edges?.length) {
-      const edges = fetcher.data.products.edges;
-      const fetchedProducts = edges.map((edge) => edge.node);
+    const edges = fetcher.data?.products?.edges;
 
+    if (edges && edges.length > 0) {
+      const fetchedProducts = edges.map((edge) => edge.node);
       setProducts(fetchedProducts);
       setCursors({
         startCursor: edges[0]?.cursor ?? null,
         endCursor: edges[edges.length - 1]?.cursor ?? null,
-        hasNextPage: fetcher.data.products.pageInfo.hasNextPage,
-        hasPreviousPage: fetcher.data.products.pageInfo.hasPreviousPage,
+        hasNextPage: fetcher?.data?.products?.pageInfo?.hasNextPage || false,
+        hasPreviousPage:
+          fetcher?.data?.products?.pageInfo?.hasPreviousPage || false,
+      });
+    } else {
+      setProducts([]);
+      setCursors({
+        startCursor: null,
+        endCursor: null,
+        hasNextPage: false,
+        hasPreviousPage: false,
       });
     }
   }, [fetcher.data]);
@@ -87,14 +90,14 @@ const ProductSelectModal = ({
 
   const handlePagination = (direction: "next" | "prev") => {
     const formData = new FormData();
-    formData.append("search", `title:*${debouncedSearchProduct}*`);
-    formData.append(
-      "cursor",
-      direction === "next"
-        ? (cursors.endCursor ?? "")
-        : (cursors.startCursor ?? ""),
-    );
-    formData.append("direction", direction);
+    formData.append("search", debouncedSearchProduct);
+    if (direction === "next" && cursors.endCursor) {
+      formData.append("cursor", cursors.endCursor);
+      formData.append("direction", "next");
+    } else if (direction === "prev" && cursors.startCursor) {
+      formData.append("cursor", cursors.startCursor);
+      formData.append("direction", "prev");
+    }
 
     fetcher.submit(formData, {
       method: "post",
@@ -159,7 +162,7 @@ function renderProductItem(item: any) {
   );
 
   return (
-    <ResourceItem onClick={() => {}} id={id} media={media}>
+    <ResourceItem id={id} media={media} onClick={() => {}}>
       {title}
     </ResourceItem>
   );

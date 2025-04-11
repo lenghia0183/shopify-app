@@ -1,5 +1,3 @@
-// routes/api/search-products.tsx
-
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { authenticate } from "app/shopify.server";
 
@@ -19,7 +17,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  console.log("action productTagList");
   const { admin } = await authenticate.admin(request);
 
   const formData = await request.formData();

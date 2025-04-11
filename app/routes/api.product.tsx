@@ -3,16 +3,17 @@ import { authenticate } from "app/shopify.server";
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
-  const search = formData.get("search")?.toString() || "";
+  const rawSearch = formData.get("search")?.toString() || "";
   const cursor = formData.get("cursor")?.toString();
   const direction = formData.get("direction")?.toString();
 
+  const search = rawSearch.trim();
   const { admin } = await authenticate.admin(request);
 
   const paginationArg =
-    direction === "prev"
+    direction === "prev" && cursor
       ? `last: 5, before: "${cursor}"`
-      : cursor
+      : direction === "next" && cursor
         ? `first: 5, after: "${cursor}"`
         : `first: 5`;
 
@@ -54,7 +55,7 @@ export async function action({ request }: ActionFunctionArgs) {
     }`,
     {
       variables: {
-        query: search,
+        query: search ? `title:*${search}*` : undefined,
       },
     },
   );

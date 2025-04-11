@@ -8,6 +8,7 @@ import {
   TextContainer,
 } from "@shopify/polaris";
 import { SearchIcon } from "@shopify/polaris-icons";
+import { useDebounce } from "app/hooks/useDebounce";
 import toTitleCase from "app/utils/toTitleCase";
 import { useField, useFormikContext } from "formik";
 import { useEffect, useMemo, useState, useCallback } from "react";
@@ -22,16 +23,13 @@ type FormikAutocompleteProps<T, O extends Option = Option> = Omit<
   deselectedOptions?: O[];
   selectedTagPosition?: "top" | "bottom";
   paginationInterval?: number;
-  asyncRequest?: () => void;
+  asyncRequest?: (value?: string) => void;
   asyncRequestHelper?: (data: T) => O[];
   fetcher?: FetcherWithComponents<T>;
   label?: string;
   placeholder?: string;
-  renderSelectedTags?: (
-    selectedOptions: string[],
-    options: O[],
-    removeTag: (tag: string) => void,
-  ) => React.ReactNode;
+  renderSelectedTags?: (removeTag: (tag: string) => void) => React.ReactNode;
+  searchAsync: boolean;
 };
 
 export default function FormikAutocomplete<T, O extends Option = Option>({
@@ -46,6 +44,7 @@ export default function FormikAutocomplete<T, O extends Option = Option>({
   placeholder = "Search...",
   options: _ignored,
   renderSelectedTags,
+  searchAsync = true,
   ...rest
 }: FormikAutocompleteProps<T, O>) {
   const [field, meta, helpers] = useField(name);
@@ -54,10 +53,18 @@ export default function FormikAutocomplete<T, O extends Option = Option>({
   const selectedOptions = useMemo(() => field.value || [], [field.value]);
 
   const [finalOptions, setFinalOptions] = useState<O[]>(deselectedOptions);
+  const [originOptions, setOriginOptions] = useState<O[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [visibleOptionIndex, setVisibleOptionIndex] =
     useState(paginationInterval);
   const [isLoading, setIsLoading] = useState(false);
+  const debounceInputValue = useDebounce(inputValue);
+  useEffect(() => {
+    if (asyncRequest && searchAsync) {
+      asyncRequest(debounceInputValue);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debounceInputValue]);
 
   useEffect(() => {
     if (asyncRequest) {
@@ -69,6 +76,7 @@ export default function FormikAutocomplete<T, O extends Option = Option>({
   useEffect(() => {
     if (asyncRequestHelper && fetcher?.data) {
       setFinalOptions(asyncRequestHelper(fetcher.data));
+      setOriginOptions(asyncRequestHelper(fetcher.data));
     }
   }, [fetcher?.data, asyncRequestHelper]);
 
@@ -77,6 +85,7 @@ export default function FormikAutocomplete<T, O extends Option = Option>({
     return finalOptions.filter((opt) =>
       opt.label.toLowerCase().includes(inputValue.toLowerCase()),
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputValue, finalOptions]);
 
   const displayedOptions = useMemo(
@@ -110,7 +119,9 @@ export default function FormikAutocomplete<T, O extends Option = Option>({
 
   const removeTag = useCallback(
     (tag: string) => () => {
-      helpers.setValue(selectedOptions.filter((item: string) => item !== tag));
+      helpers.setValue(
+        selectedOptions.filter((item: any) => item.value !== tag),
+      );
     },
     [selectedOptions, helpers],
   );
@@ -118,12 +129,12 @@ export default function FormikAutocomplete<T, O extends Option = Option>({
   const renderedTags =
     selectedOptions.length > 0 ? (
       renderSelectedTags ? (
-        renderSelectedTags(selectedOptions, finalOptions, removeTag)
+        renderSelectedTags(removeTag)
       ) : (
         <LegacyStack spacing="extraTight" alignment="center">
-          {selectedOptions.map((option: string) => (
-            <Tag key={option} onRemove={removeTag(option)}>
-              {toTitleCase(option.replace(/_/g, " "))}
+          {selectedOptions.map((option: any) => (
+            <Tag key={option.value} onRemove={removeTag(option.value)}>
+              {toTitleCase(option?.label?.replace(/_/g, " "))}
             </Tag>
           ))}
         </LegacyStack>
@@ -169,10 +180,14 @@ export default function FormikAutocomplete<T, O extends Option = Option>({
         {...rest}
         allowMultiple
         options={displayedOptions}
-        selected={selectedOptions}
+        selected={selectedOptions.map((item: any) => item?.value)}
         textField={textField}
         onSelect={(newSelected) => {
-          helpers.setValue(newSelected);
+          const newSelectedOptions = originOptions.filter((item) =>
+            newSelected.includes(item.value),
+          );
+
+          helpers.setValue(newSelectedOptions);
         }}
         loading={
           isLoading ||

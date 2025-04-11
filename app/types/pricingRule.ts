@@ -4,6 +4,7 @@ import type {
   IPricingRuleStatus,
 } from "app/constants/pricingRule";
 import { type IAutoCompleteState } from "./common";
+import { type ICollectionOptions } from "./collection";
 
 export interface IPricingRuleFormValues {
   name: string;
@@ -16,5 +17,5 @@ export interface IPricingRuleFormValues {
   productTagsState: IAutoCompleteState;
   selectedProducts: string[];
   searchSpecificProducts?: string;
-  collections?: string[];
+  collections?: ICollectionOptions[];
 }

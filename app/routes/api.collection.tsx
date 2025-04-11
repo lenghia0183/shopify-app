@@ -1,27 +1,33 @@
-// routes/api/search-products.tsx
-
-import type { LoaderFunctionArgs } from "@remix-run/node";
+// routes/api.search-products.tsx
+import type { ActionFunctionArgs } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import { authenticate } from "app/shopify.server";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
   const { admin } = await authenticate.admin(request);
+  const formData = await request.formData();
+  const query = String(formData.get("query") || "");
+
   const response = await admin.graphql(
-    `query collectionList{
-        collections (first: 10){
-          edges {
-            node {
-              id
-              image {
-                url
-                altText
-              }
-              title
+    `query collectionList($query: String!) {
+      collections(first: 10, query: $query) {
+        edges {
+          node {
+            id
+            image {
+              url
+              altText
             }
+            title
           }
         }
-      }`,
+      }
+    }`,
+    {
+      variables: { query },
+    },
   );
+
   const data = await response.json();
-  // console.log("data", data);
-  return data.data;
+  return json(data.data);
 }

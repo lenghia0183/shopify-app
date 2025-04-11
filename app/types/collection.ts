@@ -12,6 +12,7 @@ export interface ICollectionOptions {
   value: string;
   label: string;
   url?: string;
+  altText?: string;
 }
 export interface ICollectionListResponse {
   collections: {
