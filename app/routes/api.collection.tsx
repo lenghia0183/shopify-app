@@ -7,10 +7,19 @@ export async function action({ request }: ActionFunctionArgs) {
   const { admin } = await authenticate.admin(request);
   const formData = await request.formData();
   const query = String(formData.get("query") || "");
+  const cursor = formData.get("cursor")?.toString();
+  const direction = formData.get("direction")?.toString();
+
+  const paginationArg =
+    direction === "prev" && cursor
+      ? `last: 12, before: "${cursor}"`
+      : direction === "next" && cursor
+        ? `first: 12, after: "${cursor}"`
+        : `first: 12`;
 
   const response = await admin.graphql(
     `query collectionList($query: String!) {
-      collections(first: 10, query: $query) {
+      collections(${paginationArg}, query: $query) {
         edges {
           node {
             id
@@ -20,6 +29,13 @@ export async function action({ request }: ActionFunctionArgs) {
             }
             title
           }
+          cursor
+        }
+        pageInfo {
+          hasNextPage
+          hasPreviousPage
+          startCursor
+          endCursor
         }
       }
     }`,

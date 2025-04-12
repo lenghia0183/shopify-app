@@ -1,4 +1,4 @@
-import { type FetcherWithComponents } from "@remix-run/react";
+import { useFetcher, type FetcherWithComponents } from "@remix-run/react";
 import {
   Autocomplete,
   Tag,
@@ -9,9 +9,10 @@ import {
 } from "@shopify/polaris";
 import { SearchIcon } from "@shopify/polaris-icons";
 import { useDebounce } from "app/hooks/useDebounce";
+import { type IPageInfo } from "app/types/common";
 import toTitleCase from "app/utils/toTitleCase";
 import { useField, useFormikContext } from "formik";
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 
 type Option = { value: string; label: string };
 
@@ -25,6 +26,7 @@ type FormikAutocompleteProps<T, O extends Option = Option> = Omit<
   paginationInterval?: number;
   asyncRequest?: (value?: string) => void;
   asyncRequestHelper?: (data: T) => O[];
+  asyncRequestPageInfo?: (data: T) => IPageInfo;
   fetcher?: FetcherWithComponents<T>;
   label?: string;
   placeholder?: string;
@@ -36,56 +38,90 @@ export default function FormikAutocomplete<T, O extends Option = Option>({
   name,
   deselectedOptions = [],
   selectedTagPosition = "bottom",
-  paginationInterval = 10,
+  paginationInterval = 12,
   asyncRequest,
   asyncRequestHelper,
+  asyncRequestPageInfo = () => ({
+    hasNextPage: false,
+    endCursor: null,
+    hasPreviousPage: false,
+    startCursor: null,
+  }),
   fetcher,
   label = "",
   placeholder = "Search...",
-  options: _ignored,
   renderSelectedTags,
   searchAsync = true,
   ...rest
 }: FormikAutocompleteProps<T, O>) {
   const [field, meta, helpers] = useField(name);
   const { setFieldValue } = useFormikContext<any>();
+  const [inputValue, setInputValue] = useState("");
+  const debounceInputValue = useDebounce(inputValue);
 
   const selectedOptions = useMemo(() => field.value || [], [field.value]);
-
   const [finalOptions, setFinalOptions] = useState<O[]>(deselectedOptions);
   const [originOptions, setOriginOptions] = useState<O[]>([]);
-  const [inputValue, setInputValue] = useState("");
   const [visibleOptionIndex, setVisibleOptionIndex] =
     useState(paginationInterval);
-  const [isLoading, setIsLoading] = useState(false);
-  const debounceInputValue = useDebounce(inputValue);
+  const pageInfoRef = useRef<IPageInfo>();
+  const fetcherLoadMore = useFetcher<T>();
+  const [fetcherForm, setFetcherForm] = useState<{
+    action: string | undefined;
+    method: string;
+  }>();
+
+  const mergeUniqueOptions = (prev: O[], next: O[]) => {
+    const map = new Map<string, O>();
+    [...prev, ...next].forEach((item) => map.set(item.value, item));
+    return Array.from(map.values());
+  };
+
   useEffect(() => {
-    if (asyncRequest && searchAsync) {
-      asyncRequest(debounceInputValue);
-    }
+    if (asyncRequest && searchAsync) asyncRequest(debounceInputValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debounceInputValue]);
 
   useEffect(() => {
-    if (asyncRequest) {
-      asyncRequest();
-    }
+    if (asyncRequest) asyncRequest();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (asyncRequestHelper && fetcher?.data) {
-      setFinalOptions(asyncRequestHelper(fetcher.data));
-      setOriginOptions(asyncRequestHelper(fetcher.data));
+    if (fetcher?.data && asyncRequestHelper && !fetcherLoadMore.data) {
+      const newOptions = asyncRequestHelper(fetcher.data as T);
+      pageInfoRef.current = asyncRequestPageInfo(fetcher.data);
+      setFinalOptions(newOptions);
+      setOriginOptions(newOptions);
     }
-  }, [fetcher?.data, asyncRequestHelper]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetcher?.data]);
+
+  useEffect(() => {
+    if (fetcher?.state === "submitting" || fetcher?.state === "loading") {
+      setFetcherForm({
+        action: fetcher.formAction,
+        method: fetcher.formMethod as "POST",
+      });
+    }
+  }, [fetcher]);
+
+  useEffect(() => {
+    if (fetcherLoadMore?.data && asyncRequestHelper) {
+      const newOptions = asyncRequestHelper(fetcherLoadMore.data as T);
+      pageInfoRef.current = asyncRequestPageInfo(fetcherLoadMore.data as T);
+
+      setFinalOptions((prev) => mergeUniqueOptions(prev, newOptions));
+      setOriginOptions((prev) => mergeUniqueOptions(prev, newOptions));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetcherLoadMore.data]);
 
   const filteredOptions = useMemo(() => {
     if (!inputValue) return finalOptions;
     return finalOptions.filter((opt) =>
       opt.label.toLowerCase().includes(inputValue.toLowerCase()),
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputValue, finalOptions]);
 
   const displayedOptions = useMemo(
@@ -104,24 +140,26 @@ export default function FormikAutocomplete<T, O extends Option = Option>({
 
   useEffect(() => {
     setVisibleOptionIndex(paginationInterval);
-  }, [inputValue, paginationInterval]);
+  }, [paginationInterval]);
 
   const handleLoadMoreResults = useCallback(() => {
-    if (!willLoadMoreResults) return;
-    setIsLoading(true);
-    setTimeout(() => {
-      setVisibleOptionIndex((prev) =>
-        Math.min(prev + paginationInterval, filteredOptions.length),
-      );
-      setIsLoading(false);
-    }, 300);
-  }, [willLoadMoreResults, paginationInterval, filteredOptions.length]);
+    if (pageInfoRef.current?.hasNextPage && fetcherLoadMore.state === "idle") {
+      const formData = new FormData();
+      formData.append("cursor", pageInfoRef.current.endCursor ?? "");
+      formData.append("direction", "next");
+      if (fetcherForm) {
+        fetcherLoadMore.submit(formData, {
+          action: fetcherForm.action,
+          method: fetcherForm.method as "POST",
+        });
+        setVisibleOptionIndex((prev) => prev + paginationInterval);
+      }
+    }
+  }, [fetcherForm, fetcherLoadMore, paginationInterval]);
 
   const removeTag = useCallback(
     (tag: string) => () => {
-      helpers.setValue(
-        selectedOptions.filter((item: any) => item.value !== tag),
-      );
+      helpers.setValue(selectedOptions.filter((item: O) => item.value !== tag));
     },
     [selectedOptions, helpers],
   );
@@ -132,9 +170,9 @@ export default function FormikAutocomplete<T, O extends Option = Option>({
         renderSelectedTags(removeTag)
       ) : (
         <LegacyStack spacing="extraTight" alignment="center">
-          {selectedOptions.map((option: any) => (
+          {selectedOptions.map((option: O) => (
             <Tag key={option.value} onRemove={removeTag(option.value)}>
-              {toTitleCase(option?.label?.replace(/_/g, " "))}
+              {toTitleCase(option.label.replace(/_/g, " "))}
             </Tag>
           ))}
         </LegacyStack>
@@ -155,24 +193,22 @@ export default function FormikAutocomplete<T, O extends Option = Option>({
   );
 
   const emptyState = (
-    <>
+    <div style={{ textAlign: "center" }}>
       <Icon source={SearchIcon} />
-      <div style={{ textAlign: "center" }}>
-        <TextContainer>Could not find any results</TextContainer>
-      </div>
-    </>
+      <TextContainer>Could not find any results</TextContainer>
+    </div>
   );
 
   useEffect(() => {
     setFieldValue(`${name}State`, {
       inputValue,
-      displayedOptions: displayedOptions,
+      displayedOptions,
       visibleIndex: visibleOptionIndex,
       willLoadMore: willLoadMoreResults,
-      filteredOptions: filteredOptions,
+      filteredOptions,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputValue, visibleOptionIndex, willLoadMoreResults, name]);
+  }, [inputValue, visibleOptionIndex, willLoadMoreResults]);
 
   return (
     <LegacyStack vertical>
@@ -180,22 +216,17 @@ export default function FormikAutocomplete<T, O extends Option = Option>({
         {...rest}
         allowMultiple
         options={displayedOptions}
-        selected={selectedOptions.map((item: any) => item?.value)}
+        selected={selectedOptions.map((item: O) => item.value)}
         textField={textField}
         onSelect={(newSelected) => {
           const newSelectedOptions = originOptions.filter((item) =>
             newSelected.includes(item.value),
           );
-
           helpers.setValue(newSelectedOptions);
         }}
-        loading={
-          isLoading ||
-          fetcher?.state === "submitting" ||
-          fetcher?.state === "loading"
-        }
+        loading={fetcherLoadMore.state !== "idle" || fetcher?.state !== "idle"}
         onLoadMoreResults={handleLoadMoreResults}
-        willLoadMoreResults={willLoadMoreResults}
+        willLoadMoreResults={pageInfoRef.current?.hasNextPage}
         emptyState={emptyState}
       />
       {selectedTagPosition === "bottom" && renderedTags}

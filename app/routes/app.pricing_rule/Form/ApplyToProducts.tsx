@@ -29,6 +29,7 @@ import ProductSelectModal from "../ProductSelectModal";
 import { useState } from "react";
 import { useFetcher } from "@remix-run/react";
 import { useFormikContext } from "formik";
+import { type IPageInfo } from "app/types/common";
 
 export default function ApplyToProducts() {
   const { values } = useFormikContext<IPricingRuleFormValues>();
@@ -152,6 +153,9 @@ export default function ApplyToProducts() {
                 method: "post",
                 action: "/api/collection",
               });
+            }}
+            asyncRequestPageInfo={(data): IPageInfo => {
+              return data?.collections?.pageInfo;
             }}
             asyncRequestHelper={(data): ICollectionOptions[] => {
               return (

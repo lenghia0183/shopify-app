@@ -3,7 +3,7 @@
 client_id = "4d6ad0043815feef1c54c905fb177c3e"
 name = "MyApp1"
 handle = "myapp1-58"
-application_url = "https://christine-neon-presently-directive.trycloudflare.com"
+application_url = "https://continuously-bidding-tested-chairs.trycloudflare.com"
 embedded = true
 
 [build]
@@ -27,9 +27,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://christine-neon-presently-directive.trycloudflare.com/auth/callback",
-  "https://christine-neon-presently-directive.trycloudflare.com/auth/shopify/callback",
-  "https://christine-neon-presently-directive.trycloudflare.com/api/auth/callback"
+  "https://continuously-bidding-tested-chairs.trycloudflare.com/auth/callback",
+  "https://continuously-bidding-tested-chairs.trycloudflare.com/auth/shopify/callback",
+  "https://continuously-bidding-tested-chairs.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
