@@ -29,7 +29,7 @@ type FormikAutocompleteProps<T, O extends Option = Option> = Omit<
   label?: string;
   placeholder?: string;
   renderSelectedTags?: (removeTag: (tag: string) => void) => React.ReactNode;
-  searchAsync: boolean;
+  searchAsync?: boolean;
 };
 
 export default function FormikAutocomplete<T, O extends Option = Option>({

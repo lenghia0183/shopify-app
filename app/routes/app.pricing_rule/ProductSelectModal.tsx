@@ -7,6 +7,7 @@ import {
   ResourceItem,
   ResourceList,
   Spinner,
+  Text,
   Thumbnail,
 } from "@shopify/polaris";
 import { SearchIcon } from "@shopify/polaris-icons";
@@ -120,7 +121,7 @@ const ProductSelectModal = ({
             labelHidden
             placeholder="Click to select products"
             autoComplete="off"
-            autoFocus
+            autoFocus={true}
             prefix={<Icon source={SearchIcon} tone="base" />}
           />
 
@@ -132,18 +133,28 @@ const ProductSelectModal = ({
             <ResourceList
               items={products}
               selectedItems={values.selectedProducts}
-              onSelectionChange={(values) => {
-                return setFieldValue("selectedProducts", values);
-              }}
+              onSelectionChange={(values) =>
+                setFieldValue("selectedProducts", values)
+              }
               promotedBulkActions={promotedBulkActions}
               resolveItemId={({ id }) => id}
               renderItem={renderProductItem}
-              pagination={{
-                hasNext: cursors.hasNextPage,
-                hasPrevious: cursors.hasPreviousPage,
-                onNext: () => handlePagination("next"),
-                onPrevious: () => handlePagination("prev"),
-              }}
+              {...(products.length > 0 && {
+                pagination: {
+                  hasNext: cursors.hasNextPage,
+                  hasPrevious: cursors.hasPreviousPage,
+                  onNext: () => handlePagination("next"),
+                  onPrevious: () => handlePagination("prev"),
+                },
+              })}
+              emptyState={
+                <BlockStack align="center" inlineAlign="center" gap="200">
+                  <Icon source={SearchIcon} tone="subdued" />
+                  <Text as="p" tone="subdued">
+                    No products found matching your search.
+                  </Text>
+                </BlockStack>
+              }
             />
           )}
         </BlockStack>
