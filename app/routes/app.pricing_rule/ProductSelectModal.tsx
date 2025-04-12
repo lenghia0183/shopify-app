@@ -13,7 +13,6 @@ import {
 import { SearchIcon } from "@shopify/polaris-icons";
 import FormikTextField from "app/components/FormikTextField";
 import { useDebounce } from "app/hooks/useDebounce";
-import { type IPageInfo } from "app/types/common";
 import { type IPricingRuleFormValues } from "app/types/pricingRule";
 import { type IProductListResponse } from "app/types/product";
 import { useFormikContext } from "formik";
@@ -30,12 +29,6 @@ const ProductSelectModal = ({
 }: ProductSelectModalProps) => {
   const fetcher = useFetcher<IProductListResponse>();
   const [products, setProducts] = useState<any[]>([]);
-  const [cursors, setCursors] = useState<IPageInfo>({
-    startCursor: null,
-    endCursor: null,
-    hasNextPage: false,
-    hasPreviousPage: false,
-  });
 
   const { setFieldValue, values } = useFormikContext<IPricingRuleFormValues>();
   const debouncedSearchProduct = useDebounce(
@@ -60,21 +53,6 @@ const ProductSelectModal = ({
     if (edges && edges.length > 0) {
       const fetchedProducts = edges.map((edge) => edge.node);
       setProducts(fetchedProducts);
-      setCursors({
-        startCursor: edges[0]?.cursor ?? null,
-        endCursor: edges[edges.length - 1]?.cursor ?? null,
-        hasNextPage: fetcher?.data?.products?.pageInfo?.hasNextPage || false,
-        hasPreviousPage:
-          fetcher?.data?.products?.pageInfo?.hasPreviousPage || false,
-      });
-    } else {
-      setProducts([]);
-      setCursors({
-        startCursor: null,
-        endCursor: null,
-        hasNextPage: false,
-        hasPreviousPage: false,
-      });
     }
   }, [fetcher.data]);
 
@@ -92,11 +70,14 @@ const ProductSelectModal = ({
   const handlePagination = (direction: "next" | "prev") => {
     const formData = new FormData();
     formData.append("search", debouncedSearchProduct);
-    if (direction === "next" && cursors.endCursor) {
-      formData.append("cursor", cursors.endCursor);
+    if (direction === "next" && fetcher.data?.products.pageInfo.endCursor) {
+      formData.append("cursor", fetcher.data.products.pageInfo.endCursor);
       formData.append("direction", "next");
-    } else if (direction === "prev" && cursors.startCursor) {
-      formData.append("cursor", cursors.startCursor);
+    } else if (
+      direction === "prev" &&
+      fetcher.data?.products.pageInfo.startCursor
+    ) {
+      formData.append("cursor", fetcher.data.products.pageInfo.startCursor);
       formData.append("direction", "prev");
     }
 
@@ -141,8 +122,8 @@ const ProductSelectModal = ({
               renderItem={renderProductItem}
               {...(products.length > 0 && {
                 pagination: {
-                  hasNext: cursors.hasNextPage,
-                  hasPrevious: cursors.hasPreviousPage,
+                  hasNext: fetcher.data?.products.pageInfo.hasNextPage,
+                  hasPrevious: fetcher.data?.products.pageInfo.hasPreviousPage,
                   onNext: () => handlePagination("next"),
                   onPrevious: () => handlePagination("prev"),
                 },

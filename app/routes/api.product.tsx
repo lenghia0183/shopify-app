@@ -50,7 +50,8 @@ export async function action({ request }: ActionFunctionArgs) {
         pageInfo {
           hasNextPage
           hasPreviousPage
-        
+          startCursor
+          endCursor
         }
       }
     }`,
