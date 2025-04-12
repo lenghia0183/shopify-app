@@ -19,7 +19,9 @@ export default function PricingRulePage() {
     priceType: "",
     priceValue: "",
     productTags: [],
-    productTagsState: {},
+    productTagsState: {
+      filteredOptions: [],
+    },
     selectedProducts: [],
     collections: [],
   };

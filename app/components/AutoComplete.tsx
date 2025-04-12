@@ -208,7 +208,7 @@ export default function FormikAutocomplete<T, O extends Option = Option>({
       filteredOptions,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputValue, visibleOptionIndex, willLoadMoreResults]);
+  }, [inputValue, filteredOptions, visibleOptionIndex, willLoadMoreResults]);
 
   return (
     <LegacyStack vertical>

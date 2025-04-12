@@ -138,6 +138,11 @@ export default function ApplyToProducts() {
     }
   };
 
+  console.log(
+    "values?.productTagsState?.filteredOptions",
+    values?.productTagsState?.filteredOptions?.length,
+  );
+
   const renderCollectionChildren = (values: IPricingRuleFormValues) => {
     if (values.applyTo.includes(APPLY_TO_OPTIONS.PRODUCT_COLLECTIONS)) {
       return (
