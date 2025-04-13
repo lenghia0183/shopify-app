@@ -3,12 +3,13 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "app/generated/prisma/client"
+  output   = "../node_modules/.prisma/client"
 }
 
 // Note that some adapters may set a maximum length for the String type by default, please ensure your strings are long
 // enough when changing adapters.
 // See https://www.prisma.io/docs/orm/reference/prisma-schema-reference#string for more information
+
 datasource db {
   provider = "sqlite"
   url      = "file:dev.sqlite"
@@ -30,4 +31,19 @@ model Session {
   locale        String?
   collaborator  Boolean?  @default(false)
   emailVerified Boolean?  @default(false)
+}
+
+model PricingRule {
+  id               String   @id @default(uuid())
+  name             String
+  priority         Int
+  status           String
+  applyTo          String
+  priceType        String
+  priceValue       String
+  productTags      String?
+  selectedProducts String?
+  collections      String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }

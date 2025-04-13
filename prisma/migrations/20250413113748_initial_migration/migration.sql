@@ -16,3 +16,19 @@ CREATE TABLE "Session" (
     "collaborator" BOOLEAN DEFAULT false,
     "emailVerified" BOOLEAN DEFAULT false
 );
+
+-- CreateTable
+CREATE TABLE "PricingRule" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "name" TEXT NOT NULL,
+    "priority" INTEGER NOT NULL,
+    "status" TEXT NOT NULL,
+    "applyTo" TEXT NOT NULL,
+    "priceType" TEXT NOT NULL,
+    "priceValue" TEXT NOT NULL,
+    "productTags" TEXT,
+    "selectedProducts" TEXT,
+    "collections" TEXT,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
+);

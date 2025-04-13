@@ -18,6 +18,11 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  * 
  */
 export type Session = $Result.DefaultSelection<Prisma.$SessionPayload>
+/**
+ * Model PricingRule
+ * 
+ */
+export type PricingRule = $Result.DefaultSelection<Prisma.$PricingRulePayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -153,6 +158,16 @@ export class PrismaClient<
     * ```
     */
   get session(): Prisma.SessionDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.pricingRule`: Exposes CRUD operations for the **PricingRule** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PricingRules
+    * const pricingRules = await prisma.pricingRule.findMany()
+    * ```
+    */
+  get pricingRule(): Prisma.PricingRuleDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -593,7 +608,8 @@ export namespace Prisma {
 
 
   export const ModelName: {
-    Session: 'Session'
+    Session: 'Session',
+    PricingRule: 'PricingRule'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -612,7 +628,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "session"
+      modelProps: "session" | "pricingRule"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -687,6 +703,80 @@ export namespace Prisma {
           count: {
             args: Prisma.SessionCountArgs<ExtArgs>
             result: $Utils.Optional<SessionCountAggregateOutputType> | number
+          }
+        }
+      }
+      PricingRule: {
+        payload: Prisma.$PricingRulePayload<ExtArgs>
+        fields: Prisma.PricingRuleFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PricingRuleFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PricingRulePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PricingRuleFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PricingRulePayload>
+          }
+          findFirst: {
+            args: Prisma.PricingRuleFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PricingRulePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PricingRuleFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PricingRulePayload>
+          }
+          findMany: {
+            args: Prisma.PricingRuleFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PricingRulePayload>[]
+          }
+          create: {
+            args: Prisma.PricingRuleCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PricingRulePayload>
+          }
+          createMany: {
+            args: Prisma.PricingRuleCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PricingRuleCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PricingRulePayload>[]
+          }
+          delete: {
+            args: Prisma.PricingRuleDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PricingRulePayload>
+          }
+          update: {
+            args: Prisma.PricingRuleUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PricingRulePayload>
+          }
+          deleteMany: {
+            args: Prisma.PricingRuleDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PricingRuleUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PricingRuleUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PricingRulePayload>[]
+          }
+          upsert: {
+            args: Prisma.PricingRuleUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PricingRulePayload>
+          }
+          aggregate: {
+            args: Prisma.PricingRuleAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePricingRule>
+          }
+          groupBy: {
+            args: Prisma.PricingRuleGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PricingRuleGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PricingRuleCountArgs<ExtArgs>
+            result: $Utils.Optional<PricingRuleCountAggregateOutputType> | number
           }
         }
       }
@@ -775,6 +865,7 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     session?: SessionOmit
+    pricingRule?: PricingRuleOmit
   }
 
   /* Types for Logging */
@@ -2027,6 +2118,1124 @@ export namespace Prisma {
 
 
   /**
+   * Model PricingRule
+   */
+
+  export type AggregatePricingRule = {
+    _count: PricingRuleCountAggregateOutputType | null
+    _avg: PricingRuleAvgAggregateOutputType | null
+    _sum: PricingRuleSumAggregateOutputType | null
+    _min: PricingRuleMinAggregateOutputType | null
+    _max: PricingRuleMaxAggregateOutputType | null
+  }
+
+  export type PricingRuleAvgAggregateOutputType = {
+    priority: number | null
+  }
+
+  export type PricingRuleSumAggregateOutputType = {
+    priority: number | null
+  }
+
+  export type PricingRuleMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    priority: number | null
+    status: string | null
+    applyTo: string | null
+    priceType: string | null
+    priceValue: string | null
+    productTags: string | null
+    selectedProducts: string | null
+    collections: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PricingRuleMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    priority: number | null
+    status: string | null
+    applyTo: string | null
+    priceType: string | null
+    priceValue: string | null
+    productTags: string | null
+    selectedProducts: string | null
+    collections: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PricingRuleCountAggregateOutputType = {
+    id: number
+    name: number
+    priority: number
+    status: number
+    applyTo: number
+    priceType: number
+    priceValue: number
+    productTags: number
+    selectedProducts: number
+    collections: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type PricingRuleAvgAggregateInputType = {
+    priority?: true
+  }
+
+  export type PricingRuleSumAggregateInputType = {
+    priority?: true
+  }
+
+  export type PricingRuleMinAggregateInputType = {
+    id?: true
+    name?: true
+    priority?: true
+    status?: true
+    applyTo?: true
+    priceType?: true
+    priceValue?: true
+    productTags?: true
+    selectedProducts?: true
+    collections?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type PricingRuleMaxAggregateInputType = {
+    id?: true
+    name?: true
+    priority?: true
+    status?: true
+    applyTo?: true
+    priceType?: true
+    priceValue?: true
+    productTags?: true
+    selectedProducts?: true
+    collections?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type PricingRuleCountAggregateInputType = {
+    id?: true
+    name?: true
+    priority?: true
+    status?: true
+    applyTo?: true
+    priceType?: true
+    priceValue?: true
+    productTags?: true
+    selectedProducts?: true
+    collections?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type PricingRuleAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PricingRule to aggregate.
+     */
+    where?: PricingRuleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PricingRules to fetch.
+     */
+    orderBy?: PricingRuleOrderByWithRelationInput | PricingRuleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PricingRuleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PricingRules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PricingRules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PricingRules
+    **/
+    _count?: true | PricingRuleCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: PricingRuleAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: PricingRuleSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PricingRuleMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PricingRuleMaxAggregateInputType
+  }
+
+  export type GetPricingRuleAggregateType<T extends PricingRuleAggregateArgs> = {
+        [P in keyof T & keyof AggregatePricingRule]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePricingRule[P]>
+      : GetScalarType<T[P], AggregatePricingRule[P]>
+  }
+
+
+
+
+  export type PricingRuleGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PricingRuleWhereInput
+    orderBy?: PricingRuleOrderByWithAggregationInput | PricingRuleOrderByWithAggregationInput[]
+    by: PricingRuleScalarFieldEnum[] | PricingRuleScalarFieldEnum
+    having?: PricingRuleScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PricingRuleCountAggregateInputType | true
+    _avg?: PricingRuleAvgAggregateInputType
+    _sum?: PricingRuleSumAggregateInputType
+    _min?: PricingRuleMinAggregateInputType
+    _max?: PricingRuleMaxAggregateInputType
+  }
+
+  export type PricingRuleGroupByOutputType = {
+    id: string
+    name: string
+    priority: number
+    status: string
+    applyTo: string
+    priceType: string
+    priceValue: string
+    productTags: string | null
+    selectedProducts: string | null
+    collections: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: PricingRuleCountAggregateOutputType | null
+    _avg: PricingRuleAvgAggregateOutputType | null
+    _sum: PricingRuleSumAggregateOutputType | null
+    _min: PricingRuleMinAggregateOutputType | null
+    _max: PricingRuleMaxAggregateOutputType | null
+  }
+
+  type GetPricingRuleGroupByPayload<T extends PricingRuleGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PricingRuleGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PricingRuleGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PricingRuleGroupByOutputType[P]>
+            : GetScalarType<T[P], PricingRuleGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PricingRuleSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    priority?: boolean
+    status?: boolean
+    applyTo?: boolean
+    priceType?: boolean
+    priceValue?: boolean
+    productTags?: boolean
+    selectedProducts?: boolean
+    collections?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["pricingRule"]>
+
+  export type PricingRuleSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    priority?: boolean
+    status?: boolean
+    applyTo?: boolean
+    priceType?: boolean
+    priceValue?: boolean
+    productTags?: boolean
+    selectedProducts?: boolean
+    collections?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["pricingRule"]>
+
+  export type PricingRuleSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    priority?: boolean
+    status?: boolean
+    applyTo?: boolean
+    priceType?: boolean
+    priceValue?: boolean
+    productTags?: boolean
+    selectedProducts?: boolean
+    collections?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["pricingRule"]>
+
+  export type PricingRuleSelectScalar = {
+    id?: boolean
+    name?: boolean
+    priority?: boolean
+    status?: boolean
+    applyTo?: boolean
+    priceType?: boolean
+    priceValue?: boolean
+    productTags?: boolean
+    selectedProducts?: boolean
+    collections?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type PricingRuleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "priority" | "status" | "applyTo" | "priceType" | "priceValue" | "productTags" | "selectedProducts" | "collections" | "createdAt" | "updatedAt", ExtArgs["result"]["pricingRule"]>
+
+  export type $PricingRulePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PricingRule"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      priority: number
+      status: string
+      applyTo: string
+      priceType: string
+      priceValue: string
+      productTags: string | null
+      selectedProducts: string | null
+      collections: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["pricingRule"]>
+    composites: {}
+  }
+
+  type PricingRuleGetPayload<S extends boolean | null | undefined | PricingRuleDefaultArgs> = $Result.GetResult<Prisma.$PricingRulePayload, S>
+
+  type PricingRuleCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PricingRuleFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PricingRuleCountAggregateInputType | true
+    }
+
+  export interface PricingRuleDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PricingRule'], meta: { name: 'PricingRule' } }
+    /**
+     * Find zero or one PricingRule that matches the filter.
+     * @param {PricingRuleFindUniqueArgs} args - Arguments to find a PricingRule
+     * @example
+     * // Get one PricingRule
+     * const pricingRule = await prisma.pricingRule.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PricingRuleFindUniqueArgs>(args: SelectSubset<T, PricingRuleFindUniqueArgs<ExtArgs>>): Prisma__PricingRuleClient<$Result.GetResult<Prisma.$PricingRulePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one PricingRule that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PricingRuleFindUniqueOrThrowArgs} args - Arguments to find a PricingRule
+     * @example
+     * // Get one PricingRule
+     * const pricingRule = await prisma.pricingRule.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PricingRuleFindUniqueOrThrowArgs>(args: SelectSubset<T, PricingRuleFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PricingRuleClient<$Result.GetResult<Prisma.$PricingRulePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PricingRule that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PricingRuleFindFirstArgs} args - Arguments to find a PricingRule
+     * @example
+     * // Get one PricingRule
+     * const pricingRule = await prisma.pricingRule.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PricingRuleFindFirstArgs>(args?: SelectSubset<T, PricingRuleFindFirstArgs<ExtArgs>>): Prisma__PricingRuleClient<$Result.GetResult<Prisma.$PricingRulePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PricingRule that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PricingRuleFindFirstOrThrowArgs} args - Arguments to find a PricingRule
+     * @example
+     * // Get one PricingRule
+     * const pricingRule = await prisma.pricingRule.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PricingRuleFindFirstOrThrowArgs>(args?: SelectSubset<T, PricingRuleFindFirstOrThrowArgs<ExtArgs>>): Prisma__PricingRuleClient<$Result.GetResult<Prisma.$PricingRulePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more PricingRules that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PricingRuleFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PricingRules
+     * const pricingRules = await prisma.pricingRule.findMany()
+     * 
+     * // Get first 10 PricingRules
+     * const pricingRules = await prisma.pricingRule.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const pricingRuleWithIdOnly = await prisma.pricingRule.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PricingRuleFindManyArgs>(args?: SelectSubset<T, PricingRuleFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PricingRulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a PricingRule.
+     * @param {PricingRuleCreateArgs} args - Arguments to create a PricingRule.
+     * @example
+     * // Create one PricingRule
+     * const PricingRule = await prisma.pricingRule.create({
+     *   data: {
+     *     // ... data to create a PricingRule
+     *   }
+     * })
+     * 
+     */
+    create<T extends PricingRuleCreateArgs>(args: SelectSubset<T, PricingRuleCreateArgs<ExtArgs>>): Prisma__PricingRuleClient<$Result.GetResult<Prisma.$PricingRulePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many PricingRules.
+     * @param {PricingRuleCreateManyArgs} args - Arguments to create many PricingRules.
+     * @example
+     * // Create many PricingRules
+     * const pricingRule = await prisma.pricingRule.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PricingRuleCreateManyArgs>(args?: SelectSubset<T, PricingRuleCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many PricingRules and returns the data saved in the database.
+     * @param {PricingRuleCreateManyAndReturnArgs} args - Arguments to create many PricingRules.
+     * @example
+     * // Create many PricingRules
+     * const pricingRule = await prisma.pricingRule.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many PricingRules and only return the `id`
+     * const pricingRuleWithIdOnly = await prisma.pricingRule.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PricingRuleCreateManyAndReturnArgs>(args?: SelectSubset<T, PricingRuleCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PricingRulePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a PricingRule.
+     * @param {PricingRuleDeleteArgs} args - Arguments to delete one PricingRule.
+     * @example
+     * // Delete one PricingRule
+     * const PricingRule = await prisma.pricingRule.delete({
+     *   where: {
+     *     // ... filter to delete one PricingRule
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PricingRuleDeleteArgs>(args: SelectSubset<T, PricingRuleDeleteArgs<ExtArgs>>): Prisma__PricingRuleClient<$Result.GetResult<Prisma.$PricingRulePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one PricingRule.
+     * @param {PricingRuleUpdateArgs} args - Arguments to update one PricingRule.
+     * @example
+     * // Update one PricingRule
+     * const pricingRule = await prisma.pricingRule.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PricingRuleUpdateArgs>(args: SelectSubset<T, PricingRuleUpdateArgs<ExtArgs>>): Prisma__PricingRuleClient<$Result.GetResult<Prisma.$PricingRulePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more PricingRules.
+     * @param {PricingRuleDeleteManyArgs} args - Arguments to filter PricingRules to delete.
+     * @example
+     * // Delete a few PricingRules
+     * const { count } = await prisma.pricingRule.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PricingRuleDeleteManyArgs>(args?: SelectSubset<T, PricingRuleDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PricingRules.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PricingRuleUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PricingRules
+     * const pricingRule = await prisma.pricingRule.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PricingRuleUpdateManyArgs>(args: SelectSubset<T, PricingRuleUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PricingRules and returns the data updated in the database.
+     * @param {PricingRuleUpdateManyAndReturnArgs} args - Arguments to update many PricingRules.
+     * @example
+     * // Update many PricingRules
+     * const pricingRule = await prisma.pricingRule.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more PricingRules and only return the `id`
+     * const pricingRuleWithIdOnly = await prisma.pricingRule.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PricingRuleUpdateManyAndReturnArgs>(args: SelectSubset<T, PricingRuleUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PricingRulePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one PricingRule.
+     * @param {PricingRuleUpsertArgs} args - Arguments to update or create a PricingRule.
+     * @example
+     * // Update or create a PricingRule
+     * const pricingRule = await prisma.pricingRule.upsert({
+     *   create: {
+     *     // ... data to create a PricingRule
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PricingRule we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PricingRuleUpsertArgs>(args: SelectSubset<T, PricingRuleUpsertArgs<ExtArgs>>): Prisma__PricingRuleClient<$Result.GetResult<Prisma.$PricingRulePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of PricingRules.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PricingRuleCountArgs} args - Arguments to filter PricingRules to count.
+     * @example
+     * // Count the number of PricingRules
+     * const count = await prisma.pricingRule.count({
+     *   where: {
+     *     // ... the filter for the PricingRules we want to count
+     *   }
+     * })
+    **/
+    count<T extends PricingRuleCountArgs>(
+      args?: Subset<T, PricingRuleCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PricingRuleCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PricingRule.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PricingRuleAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PricingRuleAggregateArgs>(args: Subset<T, PricingRuleAggregateArgs>): Prisma.PrismaPromise<GetPricingRuleAggregateType<T>>
+
+    /**
+     * Group by PricingRule.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PricingRuleGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PricingRuleGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PricingRuleGroupByArgs['orderBy'] }
+        : { orderBy?: PricingRuleGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PricingRuleGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPricingRuleGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PricingRule model
+   */
+  readonly fields: PricingRuleFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PricingRule.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PricingRuleClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PricingRule model
+   */
+  interface PricingRuleFieldRefs {
+    readonly id: FieldRef<"PricingRule", 'String'>
+    readonly name: FieldRef<"PricingRule", 'String'>
+    readonly priority: FieldRef<"PricingRule", 'Int'>
+    readonly status: FieldRef<"PricingRule", 'String'>
+    readonly applyTo: FieldRef<"PricingRule", 'String'>
+    readonly priceType: FieldRef<"PricingRule", 'String'>
+    readonly priceValue: FieldRef<"PricingRule", 'String'>
+    readonly productTags: FieldRef<"PricingRule", 'String'>
+    readonly selectedProducts: FieldRef<"PricingRule", 'String'>
+    readonly collections: FieldRef<"PricingRule", 'String'>
+    readonly createdAt: FieldRef<"PricingRule", 'DateTime'>
+    readonly updatedAt: FieldRef<"PricingRule", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PricingRule findUnique
+   */
+  export type PricingRuleFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PricingRule
+     */
+    select?: PricingRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PricingRule
+     */
+    omit?: PricingRuleOmit<ExtArgs> | null
+    /**
+     * Filter, which PricingRule to fetch.
+     */
+    where: PricingRuleWhereUniqueInput
+  }
+
+  /**
+   * PricingRule findUniqueOrThrow
+   */
+  export type PricingRuleFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PricingRule
+     */
+    select?: PricingRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PricingRule
+     */
+    omit?: PricingRuleOmit<ExtArgs> | null
+    /**
+     * Filter, which PricingRule to fetch.
+     */
+    where: PricingRuleWhereUniqueInput
+  }
+
+  /**
+   * PricingRule findFirst
+   */
+  export type PricingRuleFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PricingRule
+     */
+    select?: PricingRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PricingRule
+     */
+    omit?: PricingRuleOmit<ExtArgs> | null
+    /**
+     * Filter, which PricingRule to fetch.
+     */
+    where?: PricingRuleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PricingRules to fetch.
+     */
+    orderBy?: PricingRuleOrderByWithRelationInput | PricingRuleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PricingRules.
+     */
+    cursor?: PricingRuleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PricingRules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PricingRules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PricingRules.
+     */
+    distinct?: PricingRuleScalarFieldEnum | PricingRuleScalarFieldEnum[]
+  }
+
+  /**
+   * PricingRule findFirstOrThrow
+   */
+  export type PricingRuleFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PricingRule
+     */
+    select?: PricingRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PricingRule
+     */
+    omit?: PricingRuleOmit<ExtArgs> | null
+    /**
+     * Filter, which PricingRule to fetch.
+     */
+    where?: PricingRuleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PricingRules to fetch.
+     */
+    orderBy?: PricingRuleOrderByWithRelationInput | PricingRuleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PricingRules.
+     */
+    cursor?: PricingRuleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PricingRules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PricingRules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PricingRules.
+     */
+    distinct?: PricingRuleScalarFieldEnum | PricingRuleScalarFieldEnum[]
+  }
+
+  /**
+   * PricingRule findMany
+   */
+  export type PricingRuleFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PricingRule
+     */
+    select?: PricingRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PricingRule
+     */
+    omit?: PricingRuleOmit<ExtArgs> | null
+    /**
+     * Filter, which PricingRules to fetch.
+     */
+    where?: PricingRuleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PricingRules to fetch.
+     */
+    orderBy?: PricingRuleOrderByWithRelationInput | PricingRuleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PricingRules.
+     */
+    cursor?: PricingRuleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PricingRules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PricingRules.
+     */
+    skip?: number
+    distinct?: PricingRuleScalarFieldEnum | PricingRuleScalarFieldEnum[]
+  }
+
+  /**
+   * PricingRule create
+   */
+  export type PricingRuleCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PricingRule
+     */
+    select?: PricingRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PricingRule
+     */
+    omit?: PricingRuleOmit<ExtArgs> | null
+    /**
+     * The data needed to create a PricingRule.
+     */
+    data: XOR<PricingRuleCreateInput, PricingRuleUncheckedCreateInput>
+  }
+
+  /**
+   * PricingRule createMany
+   */
+  export type PricingRuleCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PricingRules.
+     */
+    data: PricingRuleCreateManyInput | PricingRuleCreateManyInput[]
+  }
+
+  /**
+   * PricingRule createManyAndReturn
+   */
+  export type PricingRuleCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PricingRule
+     */
+    select?: PricingRuleSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PricingRule
+     */
+    omit?: PricingRuleOmit<ExtArgs> | null
+    /**
+     * The data used to create many PricingRules.
+     */
+    data: PricingRuleCreateManyInput | PricingRuleCreateManyInput[]
+  }
+
+  /**
+   * PricingRule update
+   */
+  export type PricingRuleUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PricingRule
+     */
+    select?: PricingRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PricingRule
+     */
+    omit?: PricingRuleOmit<ExtArgs> | null
+    /**
+     * The data needed to update a PricingRule.
+     */
+    data: XOR<PricingRuleUpdateInput, PricingRuleUncheckedUpdateInput>
+    /**
+     * Choose, which PricingRule to update.
+     */
+    where: PricingRuleWhereUniqueInput
+  }
+
+  /**
+   * PricingRule updateMany
+   */
+  export type PricingRuleUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PricingRules.
+     */
+    data: XOR<PricingRuleUpdateManyMutationInput, PricingRuleUncheckedUpdateManyInput>
+    /**
+     * Filter which PricingRules to update
+     */
+    where?: PricingRuleWhereInput
+    /**
+     * Limit how many PricingRules to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PricingRule updateManyAndReturn
+   */
+  export type PricingRuleUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PricingRule
+     */
+    select?: PricingRuleSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PricingRule
+     */
+    omit?: PricingRuleOmit<ExtArgs> | null
+    /**
+     * The data used to update PricingRules.
+     */
+    data: XOR<PricingRuleUpdateManyMutationInput, PricingRuleUncheckedUpdateManyInput>
+    /**
+     * Filter which PricingRules to update
+     */
+    where?: PricingRuleWhereInput
+    /**
+     * Limit how many PricingRules to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PricingRule upsert
+   */
+  export type PricingRuleUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PricingRule
+     */
+    select?: PricingRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PricingRule
+     */
+    omit?: PricingRuleOmit<ExtArgs> | null
+    /**
+     * The filter to search for the PricingRule to update in case it exists.
+     */
+    where: PricingRuleWhereUniqueInput
+    /**
+     * In case the PricingRule found by the `where` argument doesn't exist, create a new PricingRule with this data.
+     */
+    create: XOR<PricingRuleCreateInput, PricingRuleUncheckedCreateInput>
+    /**
+     * In case the PricingRule was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PricingRuleUpdateInput, PricingRuleUncheckedUpdateInput>
+  }
+
+  /**
+   * PricingRule delete
+   */
+  export type PricingRuleDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PricingRule
+     */
+    select?: PricingRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PricingRule
+     */
+    omit?: PricingRuleOmit<ExtArgs> | null
+    /**
+     * Filter which PricingRule to delete.
+     */
+    where: PricingRuleWhereUniqueInput
+  }
+
+  /**
+   * PricingRule deleteMany
+   */
+  export type PricingRuleDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PricingRules to delete
+     */
+    where?: PricingRuleWhereInput
+    /**
+     * Limit how many PricingRules to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * PricingRule without action
+   */
+  export type PricingRuleDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PricingRule
+     */
+    select?: PricingRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PricingRule
+     */
+    omit?: PricingRuleOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -2056,6 +3265,24 @@ export namespace Prisma {
   };
 
   export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
+
+
+  export const PricingRuleScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    priority: 'priority',
+    status: 'status',
+    applyTo: 'applyTo',
+    priceType: 'priceType',
+    priceValue: 'priceValue',
+    productTags: 'productTags',
+    selectedProducts: 'selectedProducts',
+    collections: 'collections',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type PricingRuleScalarFieldEnum = (typeof PricingRuleScalarFieldEnum)[keyof typeof PricingRuleScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -2228,6 +3455,95 @@ export namespace Prisma {
     emailVerified?: BoolNullableWithAggregatesFilter<"Session"> | boolean | null
   }
 
+  export type PricingRuleWhereInput = {
+    AND?: PricingRuleWhereInput | PricingRuleWhereInput[]
+    OR?: PricingRuleWhereInput[]
+    NOT?: PricingRuleWhereInput | PricingRuleWhereInput[]
+    id?: StringFilter<"PricingRule"> | string
+    name?: StringFilter<"PricingRule"> | string
+    priority?: IntFilter<"PricingRule"> | number
+    status?: StringFilter<"PricingRule"> | string
+    applyTo?: StringFilter<"PricingRule"> | string
+    priceType?: StringFilter<"PricingRule"> | string
+    priceValue?: StringFilter<"PricingRule"> | string
+    productTags?: StringNullableFilter<"PricingRule"> | string | null
+    selectedProducts?: StringNullableFilter<"PricingRule"> | string | null
+    collections?: StringNullableFilter<"PricingRule"> | string | null
+    createdAt?: DateTimeFilter<"PricingRule"> | Date | string
+    updatedAt?: DateTimeFilter<"PricingRule"> | Date | string
+  }
+
+  export type PricingRuleOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    priority?: SortOrder
+    status?: SortOrder
+    applyTo?: SortOrder
+    priceType?: SortOrder
+    priceValue?: SortOrder
+    productTags?: SortOrderInput | SortOrder
+    selectedProducts?: SortOrderInput | SortOrder
+    collections?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PricingRuleWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: PricingRuleWhereInput | PricingRuleWhereInput[]
+    OR?: PricingRuleWhereInput[]
+    NOT?: PricingRuleWhereInput | PricingRuleWhereInput[]
+    name?: StringFilter<"PricingRule"> | string
+    priority?: IntFilter<"PricingRule"> | number
+    status?: StringFilter<"PricingRule"> | string
+    applyTo?: StringFilter<"PricingRule"> | string
+    priceType?: StringFilter<"PricingRule"> | string
+    priceValue?: StringFilter<"PricingRule"> | string
+    productTags?: StringNullableFilter<"PricingRule"> | string | null
+    selectedProducts?: StringNullableFilter<"PricingRule"> | string | null
+    collections?: StringNullableFilter<"PricingRule"> | string | null
+    createdAt?: DateTimeFilter<"PricingRule"> | Date | string
+    updatedAt?: DateTimeFilter<"PricingRule"> | Date | string
+  }, "id">
+
+  export type PricingRuleOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    priority?: SortOrder
+    status?: SortOrder
+    applyTo?: SortOrder
+    priceType?: SortOrder
+    priceValue?: SortOrder
+    productTags?: SortOrderInput | SortOrder
+    selectedProducts?: SortOrderInput | SortOrder
+    collections?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: PricingRuleCountOrderByAggregateInput
+    _avg?: PricingRuleAvgOrderByAggregateInput
+    _max?: PricingRuleMaxOrderByAggregateInput
+    _min?: PricingRuleMinOrderByAggregateInput
+    _sum?: PricingRuleSumOrderByAggregateInput
+  }
+
+  export type PricingRuleScalarWhereWithAggregatesInput = {
+    AND?: PricingRuleScalarWhereWithAggregatesInput | PricingRuleScalarWhereWithAggregatesInput[]
+    OR?: PricingRuleScalarWhereWithAggregatesInput[]
+    NOT?: PricingRuleScalarWhereWithAggregatesInput | PricingRuleScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"PricingRule"> | string
+    name?: StringWithAggregatesFilter<"PricingRule"> | string
+    priority?: IntWithAggregatesFilter<"PricingRule"> | number
+    status?: StringWithAggregatesFilter<"PricingRule"> | string
+    applyTo?: StringWithAggregatesFilter<"PricingRule"> | string
+    priceType?: StringWithAggregatesFilter<"PricingRule"> | string
+    priceValue?: StringWithAggregatesFilter<"PricingRule"> | string
+    productTags?: StringNullableWithAggregatesFilter<"PricingRule"> | string | null
+    selectedProducts?: StringNullableWithAggregatesFilter<"PricingRule"> | string | null
+    collections?: StringNullableWithAggregatesFilter<"PricingRule"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"PricingRule"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"PricingRule"> | Date | string
+  }
+
   export type SessionCreateInput = {
     id: string
     shop: string
@@ -2352,6 +3668,111 @@ export namespace Prisma {
     locale?: NullableStringFieldUpdateOperationsInput | string | null
     collaborator?: NullableBoolFieldUpdateOperationsInput | boolean | null
     emailVerified?: NullableBoolFieldUpdateOperationsInput | boolean | null
+  }
+
+  export type PricingRuleCreateInput = {
+    id?: string
+    name: string
+    priority: number
+    status: string
+    applyTo: string
+    priceType: string
+    priceValue: string
+    productTags?: string | null
+    selectedProducts?: string | null
+    collections?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PricingRuleUncheckedCreateInput = {
+    id?: string
+    name: string
+    priority: number
+    status: string
+    applyTo: string
+    priceType: string
+    priceValue: string
+    productTags?: string | null
+    selectedProducts?: string | null
+    collections?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PricingRuleUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    priority?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    applyTo?: StringFieldUpdateOperationsInput | string
+    priceType?: StringFieldUpdateOperationsInput | string
+    priceValue?: StringFieldUpdateOperationsInput | string
+    productTags?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedProducts?: NullableStringFieldUpdateOperationsInput | string | null
+    collections?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PricingRuleUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    priority?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    applyTo?: StringFieldUpdateOperationsInput | string
+    priceType?: StringFieldUpdateOperationsInput | string
+    priceValue?: StringFieldUpdateOperationsInput | string
+    productTags?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedProducts?: NullableStringFieldUpdateOperationsInput | string | null
+    collections?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PricingRuleCreateManyInput = {
+    id?: string
+    name: string
+    priority: number
+    status: string
+    applyTo: string
+    priceType: string
+    priceValue: string
+    productTags?: string | null
+    selectedProducts?: string | null
+    collections?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PricingRuleUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    priority?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    applyTo?: StringFieldUpdateOperationsInput | string
+    priceType?: StringFieldUpdateOperationsInput | string
+    priceValue?: StringFieldUpdateOperationsInput | string
+    productTags?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedProducts?: NullableStringFieldUpdateOperationsInput | string | null
+    collections?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PricingRuleUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    priority?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    applyTo?: StringFieldUpdateOperationsInput | string
+    priceType?: StringFieldUpdateOperationsInput | string
+    priceValue?: StringFieldUpdateOperationsInput | string
+    productTags?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedProducts?: NullableStringFieldUpdateOperationsInput | string | null
+    collections?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -2561,6 +3982,111 @@ export namespace Prisma {
     _max?: NestedBoolNullableFilter<$PrismaModel>
   }
 
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[]
+    notIn?: number[]
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
+  export type DateTimeFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[]
+    notIn?: Date[] | string[]
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type PricingRuleCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    priority?: SortOrder
+    status?: SortOrder
+    applyTo?: SortOrder
+    priceType?: SortOrder
+    priceValue?: SortOrder
+    productTags?: SortOrder
+    selectedProducts?: SortOrder
+    collections?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PricingRuleAvgOrderByAggregateInput = {
+    priority?: SortOrder
+  }
+
+  export type PricingRuleMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    priority?: SortOrder
+    status?: SortOrder
+    applyTo?: SortOrder
+    priceType?: SortOrder
+    priceValue?: SortOrder
+    productTags?: SortOrder
+    selectedProducts?: SortOrder
+    collections?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PricingRuleMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    priority?: SortOrder
+    status?: SortOrder
+    applyTo?: SortOrder
+    priceType?: SortOrder
+    priceValue?: SortOrder
+    productTags?: SortOrder
+    selectedProducts?: SortOrder
+    collections?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PricingRuleSumOrderByAggregateInput = {
+    priority?: SortOrder
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[]
+    notIn?: number[]
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[]
+    notIn?: Date[] | string[]
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
@@ -2587,6 +4113,18 @@ export namespace Prisma {
 
   export type NullableBoolFieldUpdateOperationsInput = {
     set?: boolean | null
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type DateTimeFieldUpdateOperationsInput = {
+    set?: Date | string
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -2760,6 +4298,58 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedBoolNullableFilter<$PrismaModel>
     _max?: NestedBoolNullableFilter<$PrismaModel>
+  }
+
+  export type NestedDateTimeFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[]
+    notIn?: Date[] | string[]
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[]
+    notIn?: number[]
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[]
+    notIn?: number[]
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[]
+    notIn?: Date[] | string[]
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
 

@@ -31,3 +31,18 @@ model Session {
   collaborator  Boolean?  @default(false)
   emailVerified Boolean?  @default(false)
 }
+
+model PricingRule {
+  id               String   @id @default(uuid())
+  name             String
+  priority         Int
+  status           String
+  applyTo          String // Stored as JSON array
+  priceType        String // Stored as JSON array
+  priceValue       String
+  productTags      String? // Stored as JSON array
+  selectedProducts String? // Stored as JSON array
+  collections      String? // Stored as JSON array
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}

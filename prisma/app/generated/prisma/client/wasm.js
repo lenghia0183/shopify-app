@@ -132,6 +132,21 @@ exports.Prisma.SessionScalarFieldEnum = {
   emailVerified: 'emailVerified'
 };
 
+exports.Prisma.PricingRuleScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  priority: 'priority',
+  status: 'status',
+  applyTo: 'applyTo',
+  priceType: 'priceType',
+  priceValue: 'priceValue',
+  productTags: 'productTags',
+  selectedProducts: 'selectedProducts',
+  collections: 'collections',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -144,7 +159,8 @@ exports.Prisma.NullsOrder = {
 
 
 exports.Prisma.ModelName = {
-  Session: 'Session'
+  Session: 'Session',
+  PricingRule: 'PricingRule'
 };
 
 /**
