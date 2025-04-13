@@ -30,58 +30,25 @@ export const action: ActionFunction = async ({ request }) => {
   const values = Object.fromEntries(formData.entries());
 
   try {
-    const data = {
+    const formValues = {
       name: values.name as string,
       priority: parseInt(values.priority as string),
       status: values.status as string,
-      applyTo: JSON.parse(values.applyTo as string),
-      priceType: JSON.parse(values.priceType as string),
+      applyTo: values.applyTo as string,
+      priceType: values.priceType as string,
       priceValue: values.priceValue as string,
-      productTags: values.productTags
-        ? JSON.parse(values.productTags as string)
-        : [],
-      productTagsState: values.productTagsState
-        ? JSON.parse(values.productTagsState as string)
-        : { filteredOptions: [] },
-      selectedProducts: values.selectedProducts
-        ? JSON.parse(values.selectedProducts as string)
-        : [],
-      collections: values.collections
-        ? JSON.parse(values.collections as string)
-        : [],
+      productTags: (values.productTags as string) || null,
+      selectedProducts: (values.selectedProducts as string) || null,
+      collections: (values.collections as string) || null,
     };
 
-    const id = crypto.randomUUID();
-
-    await prisma.$executeRawUnsafe(`
-      INSERT INTO "PricingRule" (
-        id, name, priority, status, applyTo, priceType, priceValue, 
-        productTags, selectedProducts, collections, createdAt, updatedAt
-      ) 
-      VALUES (
-        '${id}', 
-        '${data.name}', 
-        ${data.priority}, 
-        '${data.status}', 
-        '${JSON.stringify(data.applyTo)}', 
-        '${JSON.stringify(data.priceType)}', 
-        '${data.priceValue}', 
-        ${data.productTags?.length ? `'${JSON.stringify(data.productTags)}'` : "null"}, 
-        ${data.selectedProducts?.length ? `'${JSON.stringify(data.selectedProducts)}'` : "null"}, 
-        ${data.collections?.length ? `'${JSON.stringify(data.collections)}'` : "null"}, 
-        '${new Date().toISOString()}', 
-        '${new Date().toISOString()}'
-      )
-    `);
+    const pricingRule = await prisma.pricingRule.create({
+      data: formValues,
+    });
 
     const response: ActionResponse = {
       success: true,
-      data: {
-        id,
-        ...data,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
+      data: pricingRule,
     };
 
     return json(response);
