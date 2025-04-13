@@ -17,6 +17,7 @@ export default function GeneralInformation() {
           name="priority"
           label="Priority"
           type="number"
+          min={0}
           helpText="Please enter an integer from 0 to 99. 0 is the highest priority."
           autoComplete=""
         />

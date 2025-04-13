@@ -8,10 +8,10 @@ import { type ICollectionOptions } from "./collection";
 
 export interface IPricingRuleFormValues {
   name: string;
-  priority: string;
+  priority: number;
   status: IPricingRuleStatus;
   applyTo: IApplyToOption[];
-  priceType: IPriceDiscountType | "";
+  priceType: IPriceDiscountType[];
   priceValue: string;
   productTags: string[];
   productTagsState: IAutoCompleteState;
