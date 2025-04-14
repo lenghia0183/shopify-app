@@ -4,7 +4,10 @@ import { SaveBar, TitleBar, useAppBridge } from "@shopify/app-bridge-react";
 
 import { Form, Formik, type FormikProps } from "formik";
 
-import { type IPricingRuleFormValues } from "app/types/pricingRule";
+import {
+  type ICreatePricingRuleBody,
+  type IPricingRuleFormValues,
+} from "app/types/pricingRule";
 import {
   APPLY_TO_OPTIONS,
   PRICE_DISCOUNT_TYPE,
@@ -26,27 +29,20 @@ type ActionResponse = {
 };
 
 export const action: ActionFunction = async ({ request }) => {
-  const formData = await request.formData();
-  // @ts-ignore
-  const values: IPricingRuleFormValues = Object.fromEntries(formData.entries());
+  const values: ICreatePricingRuleBody = await request.json();
+  console.log("values", values);
 
   try {
     const formValues = {
       name: values.name,
       priority: Number(values.priority),
       status: values.status,
-      applyTo: JSON.stringify(values.applyTo),
-      priceType: JSON.stringify(values.priceType),
+      applyTo: values.applyTo,
+      priceType: values.priceType,
       priceValue: values.priceValue,
-      productTags: Array.isArray(values.productTags)
-        ? values.productTags
-        : JSON.parse(values.productTags || "[]"),
-      selectedProducts: Array.isArray(values.selectedProducts)
-        ? values.selectedProducts
-        : JSON.parse(values.selectedProducts || "[]"),
-      collections: Array.isArray(values.collections)
-        ? values.collections
-        : JSON.parse(values.collections || "[]"),
+      productTags: values.productTags || [],
+      selectedProducts: values.selectedProducts || [],
+      collections: values.collections || [],
     };
 
     const pricingRule = await prisma.pricingRule.create({
@@ -130,20 +126,20 @@ export default function PricingRulePage() {
       <Formik
         initialValues={initialValues}
         onSubmit={(values) => {
-          const convertValues = {
-            ...values,
+          console.log("values", values);
+          const convertValues: ICreatePricingRuleBody = {
+            name: values.name,
+            priority: values.priority,
+            status: values.status,
+            applyTo: values.applyTo[0],
+            priceType: values.priceType[0],
+            priceValue: values.priceValue,
+            productTags: values.productTags,
             selectedProducts: values.selectedProducts.map((item) => item.id),
+            collections: values.collections?.map((item) => item.value) ?? [],
           };
-          const formData = new FormData();
-          Object.entries(convertValues).forEach(([key, value]) => {
-            if (typeof value === "object" && value !== null) {
-              formData.append(key, JSON.stringify(value));
-            } else {
-              formData.append(key, String(value));
-            }
-          });
 
-          fetcher.submit(formData, {
+          fetcher.submit(convertValues, {
             method: "post",
             encType: "application/json",
           });

@@ -11,3 +11,15 @@ export interface IAutoCompleteState {
   visibleIndex?: number;
   willLoadMore?: boolean;
 }
+
+export interface IApiResponse<T> {
+  success: boolean;
+  data: T;
+  meta: {
+    totalRules: number;
+    currentPage: number;
+    totalPages: number;
+    pageSize: number;
+  };
+  message: any;
+}

@@ -11,37 +11,23 @@ import { json, type LoaderFunction } from "@remix-run/node";
 import { useLoaderData, useNavigate, useSearchParams } from "@remix-run/react";
 import prisma from "../db.server";
 import {
-  PRICE_DISCOUNT_TYPE,
+  APPLY_TO_OPTIONS_LABEL,
+  type IPricingRuleStatus,
+  PRICE_DISCOUNT_TYPE_LABEL,
   PRICING_RULE_STATUS,
+  PRICING_RULE_STATUS_LABEL,
 } from "app/constants/pricingRule";
-
-type PricingRule = {
-  id: string;
-  name: string;
-  priority: number;
-  status: string;
-  applyTo: string;
-  priceType: string;
-  priceValue: string;
-  createdAt: Date;
-  updatedAt: Date;
-};
-
-type LoaderData = {
-  pricingRules: PricingRule[];
-  totalRules: number;
-  currentPage: number;
-  totalPages: number;
-  pageSize: number;
-};
+import {
+  type PricingRule,
+  type IGetPricingRulesResponse,
+} from "app/types/pricingRule";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
   const page = parseInt(url.searchParams.get("page") || "1");
-  const pageSize = 10; // Số lượng items trên mỗi trang
+  const pageSize = 10;
   const skip = (page - 1) * pageSize;
 
-  // Đếm tổng số rules
   const totalRules = await prisma.pricingRule.count();
   const totalPages = Math.ceil(totalRules / pageSize);
 
@@ -53,18 +39,25 @@ export const loader: LoaderFunction = async ({ request }) => {
     skip: skip,
   });
 
-  return json<LoaderData>({
-    pricingRules,
-    totalRules,
-    currentPage: page,
-    totalPages,
-    pageSize,
+  return json<IGetPricingRulesResponse>({
+    success: true,
+    message: "Success",
+    data: {
+      pricingRules: pricingRules as PricingRule[],
+    },
+    meta: {
+      totalRules,
+      currentPage: page,
+      totalPages,
+      pageSize,
+    },
   });
 };
 
 export default function PricingRulesPage() {
-  const { pricingRules, totalRules, currentPage, totalPages, pageSize } =
-    useLoaderData<LoaderData>();
+  const { data, meta } = useLoaderData<IGetPricingRulesResponse>();
+  const { pricingRules } = data;
+  const { totalRules, currentPage, totalPages, pageSize } = meta;
   const navigate = useNavigate();
   const [, setSearchParams] = useSearchParams();
 
@@ -73,11 +66,11 @@ export default function PricingRulesPage() {
     plural: "pricing rules",
   };
 
-  const renderBadgeForStatus = (status: string) => {
+  const renderBadgeForStatus = (status: IPricingRuleStatus) => {
     if (status === PRICING_RULE_STATUS.ENABLE) {
-      return <Badge tone="success">Active</Badge>;
+      return <Badge tone="success">{PRICING_RULE_STATUS_LABEL[status]}</Badge>;
     } else {
-      return <Badge tone="warning">Disabled</Badge>;
+      return <Badge tone="warning">{PRICING_RULE_STATUS_LABEL[status]}</Badge>;
     }
   };
 
@@ -118,11 +111,14 @@ export default function PricingRulesPage() {
 
   const rowMarkup = pricingRules.map((rule, index) => {
     const { id } = rule;
-    const priceType = JSON.parse(rule.priceType);
     const priceTypeLabel =
-      priceType[0] === PRICE_DISCOUNT_TYPE.SET_NEW_PRICE
-        ? "Set Price"
-        : "Apply Discount";
+      PRICE_DISCOUNT_TYPE_LABEL[
+        rule.priceType as keyof typeof PRICE_DISCOUNT_TYPE_LABEL
+      ];
+    const labelApplyTo =
+      APPLY_TO_OPTIONS_LABEL[
+        rule.applyTo as keyof typeof APPLY_TO_OPTIONS_LABEL
+      ];
 
     return (
       <IndexTable.Row
@@ -138,6 +134,7 @@ export default function PricingRulesPage() {
           </Text>
         </IndexTable.Cell>
         <IndexTable.Cell>{rule.priority}</IndexTable.Cell>
+        <IndexTable.Cell>{labelApplyTo}</IndexTable.Cell>
         <IndexTable.Cell>{priceTypeLabel}</IndexTable.Cell>
         <IndexTable.Cell>{rule.priceValue}</IndexTable.Cell>
         <IndexTable.Cell>{renderBadgeForStatus(rule.status)}</IndexTable.Cell>
@@ -167,6 +164,7 @@ export default function PricingRulesPage() {
           headings={[
             { title: "Name" },
             { title: "Priority" },
+            { title: "Apply to" },
             { title: "Price Type" },
             { title: "Value" },
             { title: "Status" },
