@@ -54,7 +54,7 @@ export default function ApplyToProducts() {
       return !open;
     });
   };
-  console.log("values", values);
+
   const renderSpecificChildren = (values: IPricingRuleFormValues) => {
     if (values.applyTo.includes(APPLY_TO_OPTIONS.SPECIFIC_PRODUCTS)) {
       return (

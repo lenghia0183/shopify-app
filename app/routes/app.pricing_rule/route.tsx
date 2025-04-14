@@ -33,16 +33,20 @@ export const action: ActionFunction = async ({ request }) => {
   try {
     const formValues = {
       name: values.name,
-      priority: values.priority,
+      priority: Number(values.priority),
       status: values.status,
       applyTo: JSON.stringify(values.applyTo),
       priceType: JSON.stringify(values.priceType),
       priceValue: values.priceValue,
-      productTags: JSON.stringify(values.productTags),
-      selectedProducts: JSON.stringify(
-        values.selectedProducts.map((item) => item.id),
-      ),
-      collections: JSON.stringify(values.collections),
+      productTags: Array.isArray(values.productTags)
+        ? values.productTags
+        : JSON.parse(values.productTags || "[]"),
+      selectedProducts: Array.isArray(values.selectedProducts)
+        ? values.selectedProducts
+        : JSON.parse(values.selectedProducts || "[]"),
+      collections: Array.isArray(values.collections)
+        ? values.collections
+        : JSON.parse(values.collections || "[]"),
     };
 
     const pricingRule = await prisma.pricingRule.create({
@@ -126,8 +130,12 @@ export default function PricingRulePage() {
       <Formik
         initialValues={initialValues}
         onSubmit={(values) => {
+          const convertValues = {
+            ...values,
+            selectedProducts: values.selectedProducts.map((item) => item.id),
+          };
           const formData = new FormData();
-          Object.entries(values).forEach(([key, value]) => {
+          Object.entries(convertValues).forEach(([key, value]) => {
             if (typeof value === "object" && value !== null) {
               formData.append(key, JSON.stringify(value));
             } else {
@@ -135,7 +143,10 @@ export default function PricingRulePage() {
             }
           });
 
-          fetcher.submit(formData, { method: "post" });
+          fetcher.submit(formData, {
+            method: "post",
+            encType: "application/json",
+          });
         }}
         innerRef={(ref) => {
           formRef.current = ref;
