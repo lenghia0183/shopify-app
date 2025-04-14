@@ -33,7 +33,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   const pricingRules = await prisma.pricingRule.findMany({
     orderBy: {
-      priority: "asc",
+      createdAt: "desc",
     },
     take: pageSize,
     skip: skip,

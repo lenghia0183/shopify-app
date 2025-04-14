@@ -55,6 +55,7 @@ export default function FormikAutocomplete<T, O extends Option = Option>({
   ...rest
 }: FormikAutocompleteProps<T, O>) {
   const [field, meta, helpers] = useField(name);
+  const [inputField, inputMeta] = useField(`${name}Input`);
   const { setFieldValue } = useFormikContext<any>();
   const [inputValue, setInputValue] = useState("");
   const debounceInputValue = useDebounce(inputValue);
@@ -136,6 +137,7 @@ export default function FormikAutocomplete<T, O extends Option = Option>({
 
   const updateText = useCallback((value: string) => {
     setInputValue(value);
+    inputField.onChange(value);
   }, []);
 
   useEffect(() => {
@@ -179,8 +181,12 @@ export default function FormikAutocomplete<T, O extends Option = Option>({
       )
     ) : null;
 
+  console.log("meta.error", meta.error);
+
   const textField = (
     <Autocomplete.TextField
+      {...inputField}
+      name={`${name}Input`}
       onChange={updateText}
       label={label}
       value={inputValue}
@@ -188,7 +194,7 @@ export default function FormikAutocomplete<T, O extends Option = Option>({
       verticalContent={selectedTagPosition === "top" ? renderedTags : null}
       autoComplete="off"
       prefix={<Icon source={SearchIcon} tone="base" />}
-      error={meta.touched && meta.error ? meta.error : undefined}
+      error={inputMeta.error ? inputMeta.error : undefined}
     />
   );
 

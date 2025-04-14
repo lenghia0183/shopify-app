@@ -79,11 +79,7 @@ export default function ApplyToProducts() {
                   autoComplete="off"
                 />
               </Box>
-              <Button
-                onClick={toggleProductModal}
-                // icon={PlusCircleIcon}
-                accessibilityLabel="Browse"
-              >
+              <Button onClick={toggleProductModal} accessibilityLabel="Browse">
                 Browse
               </Button>
             </InlineStack>

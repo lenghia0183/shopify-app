@@ -29,7 +29,7 @@ export interface IPricingRuleFormValues {
   productTags: string[];
   productTagsState: IAutoCompleteState;
   selectedProducts: IProduct[];
-  searchSpecificProducts?: string;
+  searchSpecificProductsModal?: string;
   collections?: ICollectionOptions[];
 }
 

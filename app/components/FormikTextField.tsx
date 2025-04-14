@@ -9,17 +9,38 @@ type FormikTextFieldProps = Omit<
   name: string;
   onChange?: (value: string) => void;
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
+  min?: number;
+  max?: number;
 };
 
 export default function FormikTextField({
   name,
   onChange,
   onBlur,
+  min,
+  max,
   ...rest
 }: FormikTextFieldProps) {
   const [field, meta, helpers] = useField(name);
 
   const handleChange = (value: string) => {
+    if (value === "") {
+      helpers.setValue(value);
+      if (onChange) {
+        onChange(value);
+      }
+      return;
+    }
+
+    const numericValue = parseFloat(value);
+    if (!isNaN(numericValue)) {
+      if (min !== undefined && numericValue < min) {
+        value = min.toString();
+      } else if (max !== undefined && numericValue > max) {
+        value = max.toString();
+      }
+    }
+
     helpers.setValue(value);
     if (onChange) {
       onChange(value);

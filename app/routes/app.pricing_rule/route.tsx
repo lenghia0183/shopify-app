@@ -1,4 +1,11 @@
-import { Box, Button, InlineStack, Layout, Page } from "@shopify/polaris";
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  InlineStack,
+  Layout,
+  Page,
+} from "@shopify/polaris";
 
 import { SaveBar, TitleBar, useAppBridge } from "@shopify/app-bridge-react";
 
@@ -21,6 +28,7 @@ import { useRef, useState, useEffect } from "react";
 import { type ActionFunction, json } from "@remix-run/node";
 import prisma from "../../db.server";
 import { useFetcher, useNavigate } from "@remix-run/react";
+import { schema } from "./schema";
 
 type ActionResponse = {
   success: boolean;
@@ -80,8 +88,6 @@ export default function PricingRulePage() {
 
       if (result.success) {
         shopify.toast.show("Pricing rule created successfully!");
-
-        setTimeout(() => {}, 1000);
       } else if (result.error) {
         shopify.toast.show(`Failed to create pricing rule: ${result.error}`, {
           isError: true,
@@ -144,6 +150,7 @@ export default function PricingRulePage() {
             encType: "application/json",
           });
         }}
+        validationSchema={schema}
         innerRef={(ref) => {
           formRef.current = ref;
           setValues(ref?.values);
@@ -175,9 +182,18 @@ export default function PricingRulePage() {
       </Formik>
       <Box paddingBlockStart="300">
         <InlineStack align="end">
-          <Button variant="primary" onClick={handleSave} loading={isSubmitting}>
-            Save
-          </Button>
+          <ButtonGroup>
+            <Button variant="secondary" onClick={handleDiscard}>
+              Discard
+            </Button>
+            <Button
+              variant="primary"
+              onClick={handleSave}
+              loading={isSubmitting}
+            >
+              Save
+            </Button>
+          </ButtonGroup>
         </InlineStack>
       </Box>
     </Page>

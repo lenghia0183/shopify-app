@@ -29,23 +29,33 @@ const ProductSelectModal = ({
 }: ProductSelectModalProps) => {
   const fetcher = useFetcher<IProductListResponse>();
   const [products, setProducts] = useState<any[]>([]);
+  const [hasInitialFetch, setHasInitialFetch] = useState(false);
 
   const { setFieldValue, values } = useFormikContext<IPricingRuleFormValues>();
   const debouncedSearchProduct = useDebounce(
-    values.searchSpecificProducts || "",
+    values.searchSpecificProductsModal || "",
   );
 
   useEffect(() => {
-    if (productModalOpen && fetcher.state === "idle") {
+    if (productModalOpen && hasInitialFetch) {
       const formData = new FormData();
       formData.append("search", debouncedSearchProduct);
       fetcher.submit(formData, {
         method: "post",
         action: "/api/product",
       });
+      setHasInitialFetch(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearchProduct]);
+
+  useEffect(() => {
+    fetcher.submit(null, {
+      method: "post",
+      action: "/api/product",
+    });
+    setHasInitialFetch(true);
+  }, []);
 
   useEffect(() => {
     const edges = fetcher.data?.products?.edges;
@@ -97,7 +107,7 @@ const ProductSelectModal = ({
       <Card>
         <BlockStack gap="300">
           <FormikTextField
-            name="searchSpecificProducts"
+            name="searchSpecificProductsModal"
             label="Search and select products"
             labelHidden
             placeholder="Click to select products"
