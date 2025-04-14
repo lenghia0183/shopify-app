@@ -23,14 +23,18 @@ export async function action({ request }: ActionFunctionArgs) {
         edges {
           node {
             id
+            title
             image {
               url
               altText
             }
-            title
+            productsCount {
+              count
+            }
           }
           cursor
         }
+        
         pageInfo {
           hasNextPage
           hasPreviousPage

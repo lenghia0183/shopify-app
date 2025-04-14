@@ -3,7 +3,7 @@
 client_id = "4d6ad0043815feef1c54c905fb177c3e"
 name = "MyApp1"
 handle = "myapp1-58"
-application_url = "https://ea-iran-dow-improvements.trycloudflare.com"
+application_url = "https://path-peer-lm-courts.trycloudflare.com"
 embedded = true
 
 [build]
@@ -27,9 +27,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://ea-iran-dow-improvements.trycloudflare.com/auth/callback",
-  "https://ea-iran-dow-improvements.trycloudflare.com/auth/shopify/callback",
-  "https://ea-iran-dow-improvements.trycloudflare.com/api/auth/callback"
+  "https://path-peer-lm-courts.trycloudflare.com/auth/callback",
+  "https://path-peer-lm-courts.trycloudflare.com/auth/shopify/callback",
+  "https://path-peer-lm-courts.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]

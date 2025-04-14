@@ -27,19 +27,22 @@ type ActionResponse = {
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
-  const values = Object.fromEntries(formData.entries());
+  // @ts-ignore
+  const values: IPricingRuleFormValues = Object.fromEntries(formData.entries());
 
   try {
     const formValues = {
-      name: values.name as string,
-      priority: parseInt(values.priority as string),
-      status: values.status as string,
-      applyTo: values.applyTo as string,
-      priceType: values.priceType as string,
-      priceValue: values.priceValue as string,
-      productTags: (values.productTags as string) || null,
-      selectedProducts: (values.selectedProducts as string) || null,
-      collections: (values.collections as string) || null,
+      name: values.name,
+      priority: values.priority,
+      status: values.status,
+      applyTo: JSON.stringify(values.applyTo),
+      priceType: JSON.stringify(values.priceType),
+      priceValue: values.priceValue,
+      productTags: JSON.stringify(values.productTags),
+      selectedProducts: JSON.stringify(
+        values.selectedProducts.map((item) => item.id),
+      ),
+      collections: JSON.stringify(values.collections),
     };
 
     const pricingRule = await prisma.pricingRule.create({

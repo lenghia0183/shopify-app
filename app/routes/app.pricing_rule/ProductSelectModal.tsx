@@ -45,7 +45,7 @@ const ProductSelectModal = ({
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [productModalOpen, debouncedSearchProduct]);
+  }, [debouncedSearchProduct]);
 
   useEffect(() => {
     const edges = fetcher.data?.products?.edges;
@@ -113,10 +113,15 @@ const ProductSelectModal = ({
           ) : (
             <ResourceList
               items={products}
-              selectedItems={values.selectedProducts}
-              onSelectionChange={(values) =>
-                setFieldValue("selectedProducts", values)
-              }
+              selectedItems={values.selectedProducts.map((item) => item.id)}
+              onSelectionChange={(values) => {
+                setFieldValue(
+                  "selectedProducts",
+                  products.filter((item) => {
+                    return values.includes(item.id);
+                  }),
+                );
+              }}
               promotedBulkActions={promotedBulkActions}
               resolveItemId={({ id }) => id}
               renderItem={renderProductItem}
